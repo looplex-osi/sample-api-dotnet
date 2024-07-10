@@ -1,0 +1,71 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.34928.147
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "database", "database", "{CD0FBF16-6884-4030-AB72-A88E63299C94}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docker", "docker", "{FB905620-F926-47B3-AACE-1A479BCBDB85}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "services", "services", "{FC682368-BA5C-4705-B7C6-0F76CB8C0F35}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Looplex.DotNet.Samples.WebAPI", "src\Looplex.DotNet.Samples.WebAPI\Looplex.DotNet.Samples.WebAPI.csproj", "{258191D1-F5B8-45C8-A113-21FE2F51F742}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "src\docker\docker-compose.dcproj", "{02CBE1F9-4217-47D0-8F79-D848799A30C6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "academic", "academic", "{7101C149-79A1-439E-A907-8C1A0F7865C6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Looplex.DotNet.Samples.Academic.Application", "src\services\academic\Looplex.DotNet.Samples.Academic.Application\Looplex.DotNet.Samples.Academic.Application.csproj", "{47966937-86D5-483A-9E6C-CB4E7A00E135}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Looplex.DotNet.Samples.Academic.Application.Abstractions", "src\services\academic\Looplex.DotNet.Samples.Academic.Application.Abstractions\Looplex.DotNet.Samples.Academic.Application.Abstractions.csproj", "{3573177A-2476-4DBF-A20A-D7535ED816B6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Looplex.DotNet.Samples.Academic.Domain", "src\services\academic\Looplex.DotNet.Samples.Academic.Domain\Looplex.DotNet.Samples.Academic.Domain.csproj", "{9BDCB2F6-616F-4A64-8A93-CCBE7B359F15}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Looplex.DotNet.Samples.Academic.Infra", "src\services\academic\Looplex.DotNet.Samples.Academic.Infra\Looplex.DotNet.Samples.Academic.Infra.csproj", "{D3B417FD-FF6C-43A3-ADA9-750CC911985B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{258191D1-F5B8-45C8-A113-21FE2F51F742}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{258191D1-F5B8-45C8-A113-21FE2F51F742}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{258191D1-F5B8-45C8-A113-21FE2F51F742}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{258191D1-F5B8-45C8-A113-21FE2F51F742}.Release|Any CPU.Build.0 = Release|Any CPU
+		{02CBE1F9-4217-47D0-8F79-D848799A30C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02CBE1F9-4217-47D0-8F79-D848799A30C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02CBE1F9-4217-47D0-8F79-D848799A30C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02CBE1F9-4217-47D0-8F79-D848799A30C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{47966937-86D5-483A-9E6C-CB4E7A00E135}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47966937-86D5-483A-9E6C-CB4E7A00E135}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47966937-86D5-483A-9E6C-CB4E7A00E135}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47966937-86D5-483A-9E6C-CB4E7A00E135}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3573177A-2476-4DBF-A20A-D7535ED816B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3573177A-2476-4DBF-A20A-D7535ED816B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3573177A-2476-4DBF-A20A-D7535ED816B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3573177A-2476-4DBF-A20A-D7535ED816B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9BDCB2F6-616F-4A64-8A93-CCBE7B359F15}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9BDCB2F6-616F-4A64-8A93-CCBE7B359F15}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9BDCB2F6-616F-4A64-8A93-CCBE7B359F15}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9BDCB2F6-616F-4A64-8A93-CCBE7B359F15}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D3B417FD-FF6C-43A3-ADA9-750CC911985B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3B417FD-FF6C-43A3-ADA9-750CC911985B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3B417FD-FF6C-43A3-ADA9-750CC911985B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3B417FD-FF6C-43A3-ADA9-750CC911985B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{02CBE1F9-4217-47D0-8F79-D848799A30C6} = {FB905620-F926-47B3-AACE-1A479BCBDB85}
+		{7101C149-79A1-439E-A907-8C1A0F7865C6} = {FC682368-BA5C-4705-B7C6-0F76CB8C0F35}
+		{47966937-86D5-483A-9E6C-CB4E7A00E135} = {7101C149-79A1-439E-A907-8C1A0F7865C6}
+		{3573177A-2476-4DBF-A20A-D7535ED816B6} = {7101C149-79A1-439E-A907-8C1A0F7865C6}
+		{9BDCB2F6-616F-4A64-8A93-CCBE7B359F15} = {7101C149-79A1-439E-A907-8C1A0F7865C6}
+		{D3B417FD-FF6C-43A3-ADA9-750CC911985B} = {7101C149-79A1-439E-A907-8C1A0F7865C6}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2E6A64D4-9D37-482E-8B33-B32932B291DC}
+	EndGlobalSection
+EndGlobal

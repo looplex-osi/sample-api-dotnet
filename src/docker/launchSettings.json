@@ -1,0 +1,15 @@
+{
+  "profiles": {
+    "Docker Compose": {
+      "commandName": "DockerCompose",
+      "commandVersion": "1.0",
+      "composeLaunchAction": "LaunchBrowser",
+      "composeLaunchServiceName": "looplex.dotnet.samples.webapi",
+      "composeLaunchUrl": "{Scheme}://localhost:{ServicePort}/swagger",
+      "serviceActions": {
+        "looplex.dotnet.samples.db": "StartWithoutDebugging",
+        "looplex.dotnet.samples.webapi": "StartDebugging"
+      }
+    }
+  }
+}
