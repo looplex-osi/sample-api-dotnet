@@ -6,7 +6,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Looplex.DotNet.Core.Application.Abstractions" Version="1.0.2" />
+	  <PackageReference Include="Looplex.DotNet.Core.Application.Abstractions" Version="1.0.4" />
 	  <PackageReference Include="Looplex.OpenForExtension" Version="1.0.8" />
 	</ItemGroup>
 

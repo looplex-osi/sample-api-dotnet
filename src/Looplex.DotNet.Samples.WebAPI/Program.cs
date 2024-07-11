@@ -1,16 +1,22 @@
 using Looplex.DotNet.Core.Common.Logging;
 using Looplex.DotNet.Core.Infra.IoC;
 using Looplex.DotNet.Core.Infra.Profiles;
+using Looplex.DotNet.Core.WebAPI.ExtensionMethods;
+using Looplex.DotNet.Core.WebAPI.Factories;
 using Looplex.DotNet.Middlewares.Clients.ExtensionMethods;
 using Looplex.DotNet.Middlewares.OAuth2.ExtensionMethods;
+using Looplex.DotNet.Middlewares.OAuth2.Services;
 using Looplex.DotNet.Middlewares.OAuth2.Storages.Default.ExtensionMethods;
 using Looplex.DotNet.Middlewares.ScimV2.ExtensionMethods;
 using Looplex.DotNet.Samples.Academic.Infra.Data.Commands;
 using Looplex.DotNet.Samples.Academic.Infra.IoC;
 using Looplex.DotNet.Samples.Academic.Infra.Profiles;
 using Looplex.DotNet.Samples.WebAPI.Extensions;
+using Looplex.DotNet.Samples.WebAPI.Factories;
+using Looplex.DotNet.Samples.WebAPI.Routes;
 using Looplex.DotNet.Samples.WebAPI.Routes.Academic;
 using Looplex.DotNet.Services.ScimV2.InMemory.ExtensionMethods;
+using Looplex.DotNet.Services.ScimV2.InMemory.Services;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
@@ -67,7 +73,7 @@ namespace Looplex.DotNet.Samples.WebAPI
 
             ConfigureLogging(builder, configuration);
             ConfigureResponseCache(builder);
-            ConfigureTelemetry(builder);
+            //ConfigureTelemetry(builder);
             builder.Services.AddMassTransit(config =>
             {
                 // Configure the in-memory message broker
@@ -78,12 +84,11 @@ namespace Looplex.DotNet.Samples.WebAPI
 
             var app = builder.Build();
             
-            var plugins = PluginLoader.Load();
-            app.UseTokenRoute(plugins);
-            app.UseClientRoutes(plugins);
-            app.UseUserRoutes(plugins);
-            app.UseGroupRoutes(plugins);
-            app.UseStudentRoutes(plugins);
+            app.UseTokenRoute(["AuthorizationService.CreateAccessToken"]);
+            app.UseClientRoutes(DefaultScimV2RouteOptions.CreateFor<ClientService>());
+            app.UseUserRoutes(DefaultScimV2RouteOptions.CreateFor<UserService>());
+            app.UseGroupRoutes(DefaultScimV2RouteOptions.CreateFor<GroupService>());
+            app.UseStudentRoutes();
             // app.UseSchoolSubjectRoutes();
 
             // Configure the HTTP request pipeline.
@@ -100,17 +105,20 @@ namespace Looplex.DotNet.Samples.WebAPI
 
         private static void RegisterServices(IServiceCollection services)
         {
-            CoreDependencyContainer.RegisterServices(services);
             AcademicDependencyContainer.RegisterServices(services);
 
             RegisterMediatR(services);
 
             RegisterAutoMapperProfiles(services);
 
+            services.AddCoreServices();
+            services.AddClientsServices();
             services.AddScimV2Services();
             services.AddOAuth2Services();
             services.AddClientsInMemoryServices();
             services.AddScimV2InMemoryServices();
+
+            services.AddTransient<IContextFactory, ContextFactory>();
         }
 
         private static void RegisterMediatR(IServiceCollection services)
@@ -120,9 +128,11 @@ namespace Looplex.DotNet.Samples.WebAPI
 
         private static void RegisterAutoMapperProfiles(IServiceCollection services)
         {
-            services.AddAutoMapper(typeof(CoreProfile));
             services.AddAutoMapper(typeof(AcademicProfile));
             
+            services.AddCoreAutoMapper();
+            services.AddClientsAutoMapper();
+            services.AddScimV2AutoMapper();
             services.AddOAuth2AutoMapper();
             services.AddClientsInMemoryAutoMapper();
             services.AddScimV2InMemoryAutoMapper();
