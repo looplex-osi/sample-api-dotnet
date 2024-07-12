@@ -5,7 +5,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=https://+:443;http://+:80
-      - ASPNETCORE_Kestrel__Certificates__Default__Password=looplex
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
     expose:
       - "80"
@@ -13,7 +13,7 @@ services:
       - "8080:80"
       - "1443:443"
     volumes:
-      - /c/certificates:/https:ro
+      - ${HOME}/.aspnet/https:/https:ro
 
   looplex.dotnet.samples.db:
     environment:
