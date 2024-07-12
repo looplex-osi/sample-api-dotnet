@@ -10,8 +10,8 @@ public class DefaultScimV2RouteOptions
         var service = nameof(TService);
         return new ScimV2RouteOptions
         {
-            ServicesForGet = [$"{service}.{nameof(ICrudService.GetAll)}"],
-            ServicesForGetById = [$"{service}.{nameof(ICrudService.GetAsync)}"],
+            ServicesForGet = [$"{service}.{nameof(ICrudService.GetAllAsync)}"],
+            ServicesForGetById = [$"{service}.{nameof(ICrudService.GetByIdAsync)}"],
             ServicesForPost = [$"{service}.{nameof(ICrudService.CreateAsync)}"],
             ServicesForDelete = [$"{service}.{nameof(ICrudService.DeleteAsync)}"]
         };

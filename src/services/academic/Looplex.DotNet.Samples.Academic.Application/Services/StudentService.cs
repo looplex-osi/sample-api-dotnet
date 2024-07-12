@@ -26,7 +26,7 @@ namespace Looplex.DotNet.Samples.Academic.Application.Services
             _mapper = mapper;
         }
 
-        public async Task GetAll(IDefaultContext context)
+        public async Task GetAllAsync(IDefaultContext context)
         {
             context.Plugins.Execute<IHandleInput>(context);
 
@@ -53,7 +53,7 @@ namespace Looplex.DotNet.Samples.Academic.Application.Services
             context.Plugins.Execute<IReleaseUnmanagedResources>(context);
         }
 
-        public Task GetAsync(IDefaultContext context)
+        public Task GetByIdAsync(IDefaultContext context)
         {
             throw new System.NotImplementedException();
         }

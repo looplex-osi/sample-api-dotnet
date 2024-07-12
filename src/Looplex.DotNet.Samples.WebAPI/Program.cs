@@ -1,9 +1,16 @@
+using System.Text.Json;
 using Looplex.DotNet.Core.Common.Logging;
+using Looplex.DotNet.Core.Common.Middlewares;
+using Looplex.DotNet.Core.Common.Utils;
 using Looplex.DotNet.Core.Infra.IoC;
 using Looplex.DotNet.Core.Infra.Profiles;
+using Looplex.DotNet.Core.Middlewares;
 using Looplex.DotNet.Core.WebAPI.ExtensionMethods;
 using Looplex.DotNet.Core.WebAPI.Factories;
+using Looplex.DotNet.Core.WebAPI.Middlewares;
+using Looplex.DotNet.Core.WebAPI.Routes;
 using Looplex.DotNet.Middlewares.Clients.ExtensionMethods;
+using Looplex.DotNet.Middlewares.OAuth2.DTOs;
 using Looplex.DotNet.Middlewares.OAuth2.ExtensionMethods;
 using Looplex.DotNet.Middlewares.OAuth2.Services;
 using Looplex.DotNet.Middlewares.OAuth2.Storages.Default.ExtensionMethods;
@@ -102,7 +109,7 @@ namespace Looplex.DotNet.Samples.WebAPI
 
             app.Run();
         }
-
+        
         private static void RegisterServices(IServiceCollection services)
         {
             AcademicDependencyContainer.RegisterServices(services);

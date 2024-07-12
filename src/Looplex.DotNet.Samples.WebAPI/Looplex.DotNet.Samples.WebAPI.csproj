@@ -12,13 +12,13 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
-    <PackageReference Include="Looplex.DotNet.Core.Infra" Version="1.0.4" />
-    <PackageReference Include="Looplex.DotNet.Core.Middlewares" Version="1.0.4" />
-    <PackageReference Include="Looplex.DotNet.Core.WebAPI" Version="1.0.4" />
-    <PackageReference Include="Looplex.DotNet.Middlewares.OAuth2" Version="1.0.9" />
-    <PackageReference Include="Looplex.DotNet.Middlewares.ScimV2" Version="1.0.9" />
-    <PackageReference Include="Looplex.DotNet.Services.Clients.InMemory" Version="1.0.3" />
-    <PackageReference Include="Looplex.DotNet.Services.ScimV2.InMemory" Version="1.0.3" />
+    <PackageReference Include="Looplex.DotNet.Core.Infra" Version="1.0.6" />
+    <PackageReference Include="Looplex.DotNet.Core.Middlewares" Version="1.0.6" />
+    <PackageReference Include="Looplex.DotNet.Core.WebAPI" Version="1.0.6" />
+    <PackageReference Include="Looplex.DotNet.Middlewares.OAuth2" Version="1.0.11" />
+    <PackageReference Include="Looplex.DotNet.Middlewares.ScimV2" Version="1.0.11" />
+    <PackageReference Include="Looplex.DotNet.Services.Clients.InMemory" Version="1.0.6" />
+    <PackageReference Include="Looplex.DotNet.Services.ScimV2.InMemory" Version="1.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.6" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />

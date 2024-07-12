@@ -6,8 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Looplex.DotNet.Core.Domain" Version="1.0.4" />
-    <PackageReference Include="Looplex.DotNet.Middlewares.ScimV2" Version="1.0.9" />
+    <PackageReference Include="Looplex.DotNet.Core.Domain" Version="1.0.6" />
+    <PackageReference Include="Looplex.DotNet.Middlewares.ScimV2" Version="1.0.11" />
     <PackageReference Include="Looplex.OpenForExtension" Version="1.0.8" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
   </ItemGroup>
