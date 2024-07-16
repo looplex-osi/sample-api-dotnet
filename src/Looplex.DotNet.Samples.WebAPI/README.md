@@ -1,4 +1,18 @@
-﻿
+﻿# Samples WebApi
+
+This project is ready to run/debug on docker (using docker-compose profile). 
+
+## Dependencies
+
+### Looplex OSI
+1. [OpenForExtensions](https://github.com/looplex-osi/open-for-extension-dotnet)
+1. [BackendCore](https://github.com/looplex-osi/backend-core-dotnet)
+1. [Middlewares](https://github.com/looplex-osi/middlewares-dotnet)
+1. [Services](https://github.com/looplex-osi/services-dotnet)
+1. [Extensions](https://github.com/looplex-osi/extensions-dotnet)
+
+## References
+
 AutoMapper
 https://docs.automapper.org/en/stable/Getting-started.html
 
@@ -23,10 +37,20 @@ https://www.c-sharpcorner.com/article/how-to-implement-serilog-in-asp-net-core-w
 
 ### Windows
 
+1. Choose a local folder and add it as a system variable named HOME.
+1. Run
+    ```
+    cd ${HOME}
+    mkdir .aspnet\https
+    cd .aspnet\https
+    dotnet dev-certs https -ep aspnetapp.pfx -p looplex
+    dotnet dev-certs https --trust
+    ```
+
 ### Mac
 
 1. Make sure openssh is installed.
-2. Run
+1. Run
     ```
    mkdir -p ~/.aspnet/https
    cd ~/.aspnet/https
