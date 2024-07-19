@@ -1,4 +1,5 @@
 ﻿using Looplex.DotNet.Core.Application.Abstractions.Services;
+using Looplex.DotNet.Core.WebAPI.Routes;
 using Looplex.DotNet.Middlewares.ScimV2.ExtensionMethods;
 
 namespace Looplex.DotNet.Samples.WebAPI.Routes;
@@ -10,10 +11,27 @@ public class DefaultScimV2RouteOptions
         var service = nameof(TService);
         return new ScimV2RouteOptions
         {
-            ServicesForGet = [$"{service}.{nameof(ICrudService.GetAllAsync)}"],
-            ServicesForGetById = [$"{service}.{nameof(ICrudService.GetByIdAsync)}"],
-            ServicesForPost = [$"{service}.{nameof(ICrudService.CreateAsync)}"],
-            ServicesForDelete = [$"{service}.{nameof(ICrudService.DeleteAsync)}"]
+            
+            OptionsForGet = new RouteBuilderOptions
+            {
+                Services = [$"{service}.{nameof(ICrudService.GetAllAsync)}"],
+                Middlewares = [],
+            },
+            OptionsForGetById = new RouteBuilderOptions
+            {
+                Services = [$"{service}.{nameof(ICrudService.GetByIdAsync)}"],
+                Middlewares = [],
+            },
+            OptionsForPost = new RouteBuilderOptions
+            {
+                Services = [$"{service}.{nameof(ICrudService.CreateAsync)}"],
+                Middlewares = [],
+            },
+            OptionsForDelete = new RouteBuilderOptions
+            {
+                Services = [$"{service}.{nameof(ICrudService.DeleteAsync)}"],
+                Middlewares = [],
+            },
         };
     }
 }

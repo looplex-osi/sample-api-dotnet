@@ -1,4 +1,4 @@
-﻿using Looplex.DotNet.Middlewares.ScimV2.Entities;
+﻿using Looplex.DotNet.Middlewares.ScimV2.Domain.Entities;
 using Newtonsoft.Json;
 
 namespace Looplex.DotNet.Samples.Academic.Domain.Entities.Students;

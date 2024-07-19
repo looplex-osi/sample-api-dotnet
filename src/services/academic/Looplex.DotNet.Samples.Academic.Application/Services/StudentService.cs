@@ -1,34 +1,21 @@
-﻿using AutoMapper;
+﻿using System.Threading;
 using Looplex.DotNet.Core.Domain;
 using Looplex.DotNet.Samples.Academic.Application.Abstractions.Services;
 using Looplex.DotNet.Samples.Academic.Domain.Commands;
-using Looplex.DotNet.Samples.Academic.Domain.Entities;
 using Looplex.DotNet.Samples.Academic.Domain.Queries;
 using Looplex.OpenForExtension.Context;
 using MediatR;
 using System.Threading.Tasks;
-using Looplex.DotNet.Core.Application.Abstractions.Dtos;
 using Looplex.DotNet.Core.Application.ExtensionMethods;
-using Looplex.DotNet.Samples.Academic.Application.Abstractions.Dtos;
-using Looplex.DotNet.Samples.Academic.Application.Abstractions.Dtos.Users;
 using Looplex.DotNet.Samples.Academic.Domain.Entities.Students;
 using Looplex.OpenForExtension.Commands;
 using Looplex.OpenForExtension.ExtensionMethods;
 
 namespace Looplex.DotNet.Samples.Academic.Application.Services
 {
-    public class StudentService : IStudentService
+    public class StudentService(IMediator mediator) : IStudentService
     {
-        private readonly IMediator _mediator;
-        private readonly IMapper _mapper;
-
-        public StudentService(IMediator mediator, IMapper mapper)
-        {
-            _mediator = mediator;
-            _mapper = mapper;
-        }
-
-        public async Task GetAllAsync(IDefaultContext context)
+        public async Task GetAllAsync(IDefaultContext context, CancellationToken cancellationToken)
         {
             context.Plugins.Execute<IHandleInput>(context);
 
@@ -46,8 +33,8 @@ namespace Looplex.DotNet.Samples.Academic.Application.Services
                 {
                     Context = context,
                 };
-                var students = await _mediator.Send(getStudentsQuery);
-                context.Result = _mapper.Map<PaginatedCollection<Student>, PaginatedCollectionDto<StudentReadDto>>(students);;
+                var result = await mediator.Send(getStudentsQuery);
+                context.Result = result.ToJson(Student.Converter.Settings);
             }
 
             context.Plugins.Execute<IAfterAction>(context);
@@ -55,12 +42,12 @@ namespace Looplex.DotNet.Samples.Academic.Application.Services
             context.Plugins.Execute<IReleaseUnmanagedResources>(context);
         }
 
-        public Task GetByIdAsync(IDefaultContext context)
+        public Task GetByIdAsync(IDefaultContext context, CancellationToken cancellationToken)
         {
             throw new System.NotImplementedException();
         }
 
-        public async Task CreateAsync(IDefaultContext context)
+        public async Task CreateAsync(IDefaultContext context, CancellationToken cancellationToken)
         {
             var student = context.GetRequiredValue<Student>("Resource");
             context.Plugins.Execute<IHandleInput>(context);
@@ -80,7 +67,7 @@ namespace Looplex.DotNet.Samples.Academic.Application.Services
                 {
                     Student = context.Actors["Student"]
                 };
-                await _mediator.Send(createStudentCommand);
+                await mediator.Send(createStudentCommand);
                 context.Result = context.Actors["Student"].Id;
             }
 
@@ -90,7 +77,7 @@ namespace Looplex.DotNet.Samples.Academic.Application.Services
             
         }
 
-        public Task DeleteAsync(IDefaultContext context)
+        public Task DeleteAsync(IDefaultContext context, CancellationToken cancellationToken)
         {
             throw new System.NotImplementedException();
         }

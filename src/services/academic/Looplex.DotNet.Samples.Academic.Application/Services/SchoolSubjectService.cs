@@ -1,64 +1,30 @@
-﻿using AutoMapper;
-using Looplex.DotNet.Core.Domain;
-using Looplex.DotNet.Samples.Academic.Application.Abstractions.Services;
-using Looplex.DotNet.Samples.Academic.Domain.Commands;
-using Looplex.DotNet.Samples.Academic.Domain.Entities;
-using Looplex.DotNet.Samples.Academic.Domain.Queries;
-using Looplex.OpenForExtension.Context;
-using MediatR;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using Looplex.DotNet.Core.Application.Abstractions.Dtos;
-using Looplex.DotNet.Samples.Academic.Application.Abstractions.Dtos;
-using Looplex.DotNet.Samples.Academic.Application.Abstractions.Dtos.SchoolSubjects;
-using Looplex.DotNet.Samples.Academic.Application.Abstractions.Dtos.Users;
-using Looplex.DotNet.Samples.Academic.Domain.Entities.SchoolSubjects;
-using Looplex.DotNet.Samples.Academic.Domain.Entities.Students;
+using Looplex.DotNet.Samples.Academic.Application.Abstractions.Services;
+using Looplex.OpenForExtension.Context;
 
 namespace Looplex.DotNet.Samples.Academic.Application.Services
 {
     public class SchoolSubjectService : ISchoolSubjectService
     {
-        private readonly IMediator _mediator;
-        private readonly IMapper _mapper;
-
-        public SchoolSubjectService(IMediator mediator, IMapper mapper)
+        public Task GetAllAsync(IDefaultContext context, CancellationToken cancellationToken)
         {
-            _mediator = mediator;
-            _mapper = mapper;
+            throw new System.NotImplementedException();
         }
 
-        public async Task<PaginatedCollectionDto<SchoolSubjectDto>> GetSchoolSubjectsAsync(IDefaultContext context)
+        public Task GetByIdAsync(IDefaultContext context, CancellationToken cancellationToken)
         {
-            var getSchoolSubjectsQuery = new GetSchoolSubjectsQuery()
-            {
-                Context = context,
-            };
-            var schoolSubjects = await _mediator.Send(getSchoolSubjectsQuery);
-            return _mapper.Map<PaginatedCollection<SchoolSubject>, PaginatedCollectionDto<SchoolSubjectDto>>(schoolSubjects);
+            throw new System.NotImplementedException();
         }
 
-        public async Task<PaginatedCollectionDto<StudentReadDto>> GetStudentsAsync(IDefaultContext context, int schoolSubjectId)
+        public Task CreateAsync(IDefaultContext context, CancellationToken cancellationToken)
         {
-            var getSchoolSubjectStudentsQuery = new GetSchoolSubjectStudentsQuery()
-            {
-                Context = context,
-                SchoolSubjectId = schoolSubjectId
-            };
-            var students = await _mediator.Send(getSchoolSubjectStudentsQuery);
-            return _mapper.Map<PaginatedCollection<Student>, PaginatedCollectionDto<StudentReadDto>>(students);
+            throw new System.NotImplementedException();
         }
 
-        public async Task<int> CreateSchoolSubjectAsync(SchoolSubjectWriteDto schoolSubjectWriteDto)
+        public Task DeleteAsync(IDefaultContext context, CancellationToken cancellationToken)
         {
-            var createSchoolSubjectCommand = new CreateSchoolSubjectCommand
-            {
-                SchoolSubject = new SchoolSubject
-                {
-                    Name = schoolSubjectWriteDto.Name!,
-                }
-            };
-            await _mediator.Send(createSchoolSubjectCommand);
-            return createSchoolSubjectCommand.SchoolSubject.Id;
+            throw new System.NotImplementedException();
         }
     }
 }

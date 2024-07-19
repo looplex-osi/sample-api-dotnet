@@ -1,5 +1,5 @@
 ﻿using System.Globalization;
-using Looplex.DotNet.Middlewares.ScimV2.Entities;
+using Looplex.DotNet.Middlewares.ScimV2.Domain.Entities;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -7,7 +7,7 @@ namespace Looplex.DotNet.Samples.Academic.Domain.Entities.Students;
 
 public partial class Student : Resource
 {
-    internal static class Converter
+    public static class Converter
     {
         public static readonly JsonSerializerSettings Settings = new JsonSerializerSettings
         {

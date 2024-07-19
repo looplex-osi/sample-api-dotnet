@@ -1,4 +1,4 @@
-﻿using Looplex.DotNet.Core.WebAPI.Factories;
+﻿using Looplex.DotNet.Core.Application.Abstractions.Factories;
 using Looplex.DotNet.Samples.WebAPI.Extensions;
 using Looplex.OpenForExtension.Context;
 

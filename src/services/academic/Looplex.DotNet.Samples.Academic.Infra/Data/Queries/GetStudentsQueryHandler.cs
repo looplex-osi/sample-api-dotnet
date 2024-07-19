@@ -2,13 +2,12 @@
 using Looplex.DotNet.Core.Application.Abstractions.Queries;
 using Looplex.DotNet.Core.Common.Utils;
 using Looplex.DotNet.Core.Domain;
-using Looplex.DotNet.Samples.Academic.Domain.Entities;
 using Looplex.DotNet.Samples.Academic.Domain.Entities.Students;
 using Looplex.DotNet.Samples.Academic.Domain.Queries;
 
 namespace Looplex.DotNet.Samples.Academic.Infra.Data.Queries
 {
-    public class GetStudentsQueryHandler : IQueryHandler<GetStudentsQuery, PaginatedCollection<Student>>
+    public class GetStudentsQueryHandler : IQueryHandler<GetStudentsQuery, PaginatedCollection>
     {
         private readonly IDatabaseContext _context;
 
@@ -17,7 +16,7 @@ namespace Looplex.DotNet.Samples.Academic.Infra.Data.Queries
             _context = context;
         }
 
-        public async Task<PaginatedCollection<Student>> Handle(GetStudentsQuery request, CancellationToken cancellationToken)
+        public async Task<PaginatedCollection> Handle(GetStudentsQuery request, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -47,12 +46,12 @@ namespace Looplex.DotNet.Samples.Academic.Infra.Data.Queries
             var records = await connection.QueryAsync<Student>(query, new { offset = PaginationUtils.GetOffset(perPage, page), perPage });
 
             request.Context.State.Pagination.TotalCount = count;
-            return new PaginatedCollection<Student>
+            return new PaginatedCollection
             {
                 Page = page,
                 PerPage = perPage,
                 TotalCount = count,
-                Records = records,
+                Records = records.Select(r => (object)r).ToList(),
             };
         }
     }

@@ -1,15 +1,13 @@
+using Looplex.DotNet.Core.Application.Abstractions.Factories;
 using Looplex.DotNet.Core.WebAPI.ExtensionMethods;
-using Looplex.DotNet.Core.WebAPI.Factories;
-using Looplex.DotNet.Middlewares.Clients.ExtensionMethods;
 using Looplex.DotNet.Middlewares.OAuth2.ExtensionMethods;
-using Looplex.DotNet.Middlewares.ScimV2.Entities.Groups;
-using Looplex.DotNet.Middlewares.ScimV2.Entities.Schemas;
-using Looplex.DotNet.Middlewares.ScimV2.Entities.Users;
+using Looplex.DotNet.Middlewares.ScimV2.Domain.Entities.Groups;
+using Looplex.DotNet.Middlewares.ScimV2.Domain.Entities.Schemas;
+using Looplex.DotNet.Middlewares.ScimV2.Domain.Entities.Users;
 using Looplex.DotNet.Middlewares.ScimV2.ExtensionMethods;
 using Looplex.DotNet.Samples.Academic.Domain.Entities.Students;
 using Looplex.DotNet.Samples.Academic.Infra.Data.Commands;
 using Looplex.DotNet.Samples.Academic.Infra.IoC;
-using Looplex.DotNet.Samples.Academic.Infra.Profiles;
 using Looplex.DotNet.Samples.WebAPI.Factories;
 using Looplex.DotNet.Samples.WebAPI.Routes;
 using Looplex.DotNet.Samples.WebAPI.Routes.Academic;
@@ -18,8 +16,7 @@ using Looplex.DotNet.Services.Clients.InMemory.Services;
 using Looplex.DotNet.Services.ScimV2.InMemory.ExtensionMethods;
 using Looplex.DotNet.Services.ScimV2.InMemory.Services;
 using MassTransit;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.OpenApi.Models;
+using Looplex.DotNet.Middlewares.Clients.ExtensionMethods;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -40,36 +37,7 @@ namespace Looplex.DotNet.Samples.WebAPI
             var builder = WebApplication.CreateBuilder(args);
 
             RegisterServices(builder.Services);
-
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen(config =>
-            {
-                // Include 'SecurityScheme' to use JWT Authentication
-                var jwtSecurityScheme = new OpenApiSecurityScheme
-                {
-                    BearerFormat = "JWT",
-                    Name = "JWT Authentication",
-                    In = ParameterLocation.Header,
-                    Type = SecuritySchemeType.Http,
-                    Scheme = JwtBearerDefaults.AuthenticationScheme,
-                    Description = "Put **_ONLY_** your JWT Bearer token on textbox below!",
-
-                    Reference = new OpenApiReference
-                    {
-                        Id = JwtBearerDefaults.AuthenticationScheme,
-                        Type = ReferenceType.SecurityScheme
-                    }
-                };
-
-                config.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
-
-                config.AddSecurityRequirement(new OpenApiSecurityRequirement
-                {
-                    { jwtSecurityScheme, Array.Empty<string>() }
-                });
-            });
-
+            
             ConfigureLogging(builder, configuration);
             ConfigureResponseCache(builder);
             //ConfigureTelemetry(builder);
@@ -91,13 +59,6 @@ namespace Looplex.DotNet.Samples.WebAPI
 
             AddSchemas();
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
-
             app.UseHttpsRedirection();            
 
             app.Run();
@@ -108,8 +69,6 @@ namespace Looplex.DotNet.Samples.WebAPI
             AcademicDependencyContainer.RegisterServices(services);
 
             RegisterMediatR(services);
-
-            RegisterAutoMapperProfiles(services);
 
             services.AddCoreServices();
             services.AddClientsServices();
@@ -124,18 +83,6 @@ namespace Looplex.DotNet.Samples.WebAPI
         private static void RegisterMediatR(IServiceCollection services)
         {
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateStudentCommandHandler).Assembly));
-        }
-
-        private static void RegisterAutoMapperProfiles(IServiceCollection services)
-        {
-            services.AddAutoMapper(typeof(AcademicProfile));
-            
-            services.AddCoreAutoMapper();
-            services.AddClientsAutoMapper();
-            services.AddScimV2AutoMapper();
-            services.AddOAuth2AutoMapper();
-            services.AddClientsInMemoryAutoMapper();
-            services.AddScimV2InMemoryAutoMapper();
         }
 
         private static void ConfigureLogging(WebApplicationBuilder builder, IConfigurationRoot configuration)
