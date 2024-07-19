@@ -1,32 +1,20 @@
-using System.Text.Json;
-using Looplex.DotNet.Core.Common.Logging;
-using Looplex.DotNet.Core.Common.Middlewares;
-using Looplex.DotNet.Core.Common.Utils;
-using Looplex.DotNet.Core.Infra.IoC;
-using Looplex.DotNet.Core.Infra.Profiles;
-using Looplex.DotNet.Core.Middlewares;
 using Looplex.DotNet.Core.WebAPI.ExtensionMethods;
 using Looplex.DotNet.Core.WebAPI.Factories;
-using Looplex.DotNet.Core.WebAPI.Middlewares;
-using Looplex.DotNet.Core.WebAPI.Routes;
 using Looplex.DotNet.Middlewares.Clients.ExtensionMethods;
-using Looplex.DotNet.Middlewares.OAuth2.DTOs;
 using Looplex.DotNet.Middlewares.OAuth2.ExtensionMethods;
-using Looplex.DotNet.Middlewares.OAuth2.Services;
-using Looplex.DotNet.Middlewares.OAuth2.Storages.Default.ExtensionMethods;
 using Looplex.DotNet.Middlewares.ScimV2.ExtensionMethods;
 using Looplex.DotNet.Samples.Academic.Infra.Data.Commands;
 using Looplex.DotNet.Samples.Academic.Infra.IoC;
 using Looplex.DotNet.Samples.Academic.Infra.Profiles;
-using Looplex.DotNet.Samples.WebAPI.Extensions;
 using Looplex.DotNet.Samples.WebAPI.Factories;
 using Looplex.DotNet.Samples.WebAPI.Routes;
 using Looplex.DotNet.Samples.WebAPI.Routes.Academic;
+using Looplex.DotNet.Services.Clients.InMemory.ExtensionMethods;
+using Looplex.DotNet.Services.Clients.InMemory.Services;
 using Looplex.DotNet.Services.ScimV2.InMemory.ExtensionMethods;
 using Looplex.DotNet.Services.ScimV2.InMemory.Services;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
@@ -156,14 +144,6 @@ namespace Looplex.DotNet.Samples.WebAPI
         private static void ConfigureResponseCache(WebApplicationBuilder builder)
         {
             builder.Services.AddResponseCaching();
-            builder.Services.AddControllers(options =>
-            {
-                options.CacheProfiles.Add(Constants.Cache_Default30s,
-                    new CacheProfile()
-                    {
-                        Duration = 30
-                    });
-            });
         }
 
         private static void ConfigureTelemetry(WebApplicationBuilder builder)

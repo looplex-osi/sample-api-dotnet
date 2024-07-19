@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Looplex.DotNet.Core.Application.Abstractions.Pagination;
 using Looplex.DotNet.Core.Domain;
 using Looplex.DotNet.Samples.Academic.Application.Abstractions.DTOs;
 using Looplex.DotNet.Samples.Academic.Application.Abstractions.Services;
@@ -9,6 +8,7 @@ using Looplex.DotNet.Samples.Academic.Domain.Queries;
 using Looplex.OpenForExtension.Context;
 using MediatR;
 using System.Threading.Tasks;
+using Looplex.DotNet.Core.Application.Abstractions.Dtos;
 
 namespace Looplex.DotNet.Samples.Academic.Application.Services
 {
@@ -23,17 +23,17 @@ namespace Looplex.DotNet.Samples.Academic.Application.Services
             _mapper = mapper;
         }
 
-        public async Task<PaginatedCollectionDTO<SchoolSubjectDTO>> GetSchoolSubjectsAsync(IDefaultContext context)
+        public async Task<PaginatedCollectionDto<SchoolSubjectDTO>> GetSchoolSubjectsAsync(IDefaultContext context)
         {
             var getSchoolSubjectsQuery = new GetSchoolSubjectsQuery()
             {
                 Context = context,
             };
             var schoolSubjects = await _mediator.Send(getSchoolSubjectsQuery);
-            return _mapper.Map<PaginatedCollection<SchoolSubject>, PaginatedCollectionDTO<SchoolSubjectDTO>>(schoolSubjects);
+            return _mapper.Map<PaginatedCollection<SchoolSubject>, PaginatedCollectionDto<SchoolSubjectDTO>>(schoolSubjects);
         }
 
-        public async Task<PaginatedCollectionDTO<StudentReadDTO>> GetStudentsAsync(IDefaultContext context, int schoolSubjectId)
+        public async Task<PaginatedCollectionDto<StudentReadDTO>> GetStudentsAsync(IDefaultContext context, int schoolSubjectId)
         {
             var getSchoolSubjectStudentsQuery = new GetSchoolSubjectStudentsQuery()
             {
@@ -41,7 +41,7 @@ namespace Looplex.DotNet.Samples.Academic.Application.Services
                 SchoolSubjectId = schoolSubjectId
             };
             var students = await _mediator.Send(getSchoolSubjectStudentsQuery);
-            return _mapper.Map<PaginatedCollection<Student>, PaginatedCollectionDTO<StudentReadDTO>>(students);
+            return _mapper.Map<PaginatedCollection<Student>, PaginatedCollectionDto<StudentReadDTO>>(students);
         }
 
         public async Task<int> CreateSchoolSubjectAsync(SchoolSubjectWriteDTO schoolSubjectWriteDTO)
