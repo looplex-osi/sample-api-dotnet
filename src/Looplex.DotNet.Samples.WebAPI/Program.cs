@@ -2,7 +2,11 @@ using Looplex.DotNet.Core.WebAPI.ExtensionMethods;
 using Looplex.DotNet.Core.WebAPI.Factories;
 using Looplex.DotNet.Middlewares.Clients.ExtensionMethods;
 using Looplex.DotNet.Middlewares.OAuth2.ExtensionMethods;
+using Looplex.DotNet.Middlewares.ScimV2.Entities.Groups;
+using Looplex.DotNet.Middlewares.ScimV2.Entities.Schemas;
+using Looplex.DotNet.Middlewares.ScimV2.Entities.Users;
 using Looplex.DotNet.Middlewares.ScimV2.ExtensionMethods;
+using Looplex.DotNet.Samples.Academic.Domain.Entities.Students;
 using Looplex.DotNet.Samples.Academic.Infra.Data.Commands;
 using Looplex.DotNet.Samples.Academic.Infra.IoC;
 using Looplex.DotNet.Samples.Academic.Infra.Profiles;
@@ -84,7 +88,8 @@ namespace Looplex.DotNet.Samples.WebAPI
             app.UseUserRoutes(DefaultScimV2RouteOptions.CreateFor<UserService>());
             app.UseGroupRoutes(DefaultScimV2RouteOptions.CreateFor<GroupService>());
             app.UseStudentRoutes();
-            // app.UseSchoolSubjectRoutes();
+
+            AddSchemas();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -97,7 +102,7 @@ namespace Looplex.DotNet.Samples.WebAPI
 
             app.Run();
         }
-        
+
         private static void RegisterServices(IServiceCollection services)
         {
             AcademicDependencyContainer.RegisterServices(services);
@@ -166,6 +171,13 @@ namespace Looplex.DotNet.Samples.WebAPI
                   .WithMetrics(metrics => metrics
                       .AddAspNetCoreInstrumentation()
                       .AddConsoleExporter());
+        }
+
+        private static void AddSchemas()
+        {
+            Schema.Add<User>(File.ReadAllText("/schemas/User.1.0.schema.json"));
+            Schema.Add<Group>(File.ReadAllText("/schemas/Group.1.0.schema.json"));
+            Schema.Add<Student>(File.ReadAllText("/schemas/Student.1.0.schema.json"));
         }
     }
 }

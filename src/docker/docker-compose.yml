@@ -39,7 +39,8 @@ services:
      - looplex.dotnet.samples.db
     networks:
      - looplex
-
+    volumes:
+      - ../schemas:/schemas
   looplex.dotnet.samples.db:
     image: mcr.microsoft.com/mssql/server:2017-latest
     container_name: looplex-dotnet-samples-db

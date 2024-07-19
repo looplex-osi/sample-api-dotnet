@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Looplex.DotNet.Core.Domain;
-using Looplex.DotNet.Samples.Academic.Application.Abstractions.DTOs;
 using Looplex.DotNet.Samples.Academic.Application.Abstractions.Services;
 using Looplex.DotNet.Samples.Academic.Domain.Commands;
 using Looplex.DotNet.Samples.Academic.Domain.Entities;
@@ -10,6 +9,9 @@ using MediatR;
 using System.Threading.Tasks;
 using Looplex.DotNet.Core.Application.Abstractions.Dtos;
 using Looplex.DotNet.Core.Application.ExtensionMethods;
+using Looplex.DotNet.Samples.Academic.Application.Abstractions.Dtos;
+using Looplex.DotNet.Samples.Academic.Application.Abstractions.Dtos.Users;
+using Looplex.DotNet.Samples.Academic.Domain.Entities.Students;
 using Looplex.OpenForExtension.Commands;
 using Looplex.OpenForExtension.ExtensionMethods;
 
@@ -45,7 +47,7 @@ namespace Looplex.DotNet.Samples.Academic.Application.Services
                     Context = context,
                 };
                 var students = await _mediator.Send(getStudentsQuery);
-                context.Result = _mapper.Map<PaginatedCollection<Student>, PaginatedCollectionDto<StudentReadDTO>>(students);;
+                context.Result = _mapper.Map<PaginatedCollection<Student>, PaginatedCollectionDto<StudentReadDto>>(students);;
             }
 
             context.Plugins.Execute<IAfterAction>(context);

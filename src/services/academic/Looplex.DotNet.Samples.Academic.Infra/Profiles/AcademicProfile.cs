@@ -1,6 +1,10 @@
 ﻿using AutoMapper;
-using Looplex.DotNet.Samples.Academic.Application.Abstractions.DTOs;
+using Looplex.DotNet.Samples.Academic.Application.Abstractions.Dtos;
+using Looplex.DotNet.Samples.Academic.Application.Abstractions.Dtos.SchoolSubjects;
+using Looplex.DotNet.Samples.Academic.Application.Abstractions.Dtos.Users;
 using Looplex.DotNet.Samples.Academic.Domain.Entities;
+using Looplex.DotNet.Samples.Academic.Domain.Entities.SchoolSubjects;
+using Looplex.DotNet.Samples.Academic.Domain.Entities.Students;
 
 namespace Looplex.DotNet.Samples.Academic.Infra.Profiles
 {
@@ -8,9 +12,9 @@ namespace Looplex.DotNet.Samples.Academic.Infra.Profiles
     {
         public AcademicProfile()
         {
-            CreateMap<Student, StudentReadDTO>()
+            CreateMap<Student, StudentReadDto>()
                 .ReverseMap();
-            CreateMap<SchoolSubject, SchoolSubjectDTO>()
+            CreateMap<SchoolSubject, SchoolSubjectDto>()
                 .ReverseMap();
         }
     }

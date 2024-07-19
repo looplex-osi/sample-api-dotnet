@@ -4,6 +4,8 @@ using Looplex.DotNet.Core.Common.Exceptions;
 using Looplex.DotNet.Core.Common.Utils;
 using Looplex.DotNet.Core.Domain;
 using Looplex.DotNet.Samples.Academic.Domain.Entities;
+using Looplex.DotNet.Samples.Academic.Domain.Entities.SchoolSubjects;
+using Looplex.DotNet.Samples.Academic.Domain.Entities.Students;
 using Looplex.DotNet.Samples.Academic.Domain.Queries;
 
 namespace Looplex.DotNet.Samples.Academic.Infra.Data.Queries

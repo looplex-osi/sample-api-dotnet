@@ -1,4 +1,4 @@
-﻿namespace Looplex.DotNet.Samples.Academic.Domain.Entities
+﻿namespace Looplex.DotNet.Samples.Academic.Domain.Entities.SchoolSubjects
 {
     public class SchoolSubject
     {
