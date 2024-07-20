@@ -15,9 +15,9 @@
     <PackageReference Include="Looplex.DotNet.Core.Infra" Version="1.0.15" />
     <PackageReference Include="Looplex.DotNet.Core.Middlewares" Version="1.0.15" />
     <PackageReference Include="Looplex.DotNet.Core.WebAPI" Version="1.0.15" />
-    <PackageReference Include="Looplex.DotNet.Middlewares.Clients" Version="1.0.21" />
-    <PackageReference Include="Looplex.DotNet.Middlewares.OAuth2" Version="1.0.21" />
-    <PackageReference Include="Looplex.DotNet.Middlewares.ScimV2" Version="1.0.21" />
+    <PackageReference Include="Looplex.DotNet.Middlewares.Clients" Version="1.0.22" />
+    <PackageReference Include="Looplex.DotNet.Middlewares.OAuth2" Version="1.0.22" />
+    <PackageReference Include="Looplex.DotNet.Middlewares.ScimV2" Version="1.0.22" />
     <PackageReference Include="Looplex.DotNet.Services.Clients.InMemory" Version="1.0.10" />
     <PackageReference Include="Looplex.DotNet.Services.ScimV2.InMemory" Version="1.0.10" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />

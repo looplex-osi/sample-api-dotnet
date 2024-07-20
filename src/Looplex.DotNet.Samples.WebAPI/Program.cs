@@ -1,5 +1,6 @@
 using Looplex.DotNet.Core.Application.Abstractions.Factories;
 using Looplex.DotNet.Core.WebAPI.ExtensionMethods;
+using Looplex.DotNet.Middlewares.Clients.Domain.Entities.Clients;
 using Looplex.DotNet.Middlewares.OAuth2.ExtensionMethods;
 using Looplex.DotNet.Middlewares.ScimV2.Domain.Entities.Groups;
 using Looplex.DotNet.Middlewares.ScimV2.Domain.Entities.Schemas;
@@ -52,9 +53,9 @@ namespace Looplex.DotNet.Samples.WebAPI
             var app = builder.Build();
             
             app.UseTokenRoute(["AuthorizationService.CreateAccessToken"]);
-            app.UseClientRoutes(DefaultScimV2RouteOptions.CreateFor<ClientService>());
-            app.UseUserRoutes(DefaultScimV2RouteOptions.CreateFor<UserService>());
-            app.UseGroupRoutes(DefaultScimV2RouteOptions.CreateFor<GroupService>());
+            app.UseClientRoutes(options: DefaultScimV2RouteOptions.CreateFor<ClientService>());
+            app.UseUserRoutes(options: DefaultScimV2RouteOptions.CreateFor<UserService>());
+            app.UseGroupRoutes(options: DefaultScimV2RouteOptions.CreateFor<GroupService>());
             app.UseStudentRoutes();
 
             AddSchemas();
@@ -124,6 +125,7 @@ namespace Looplex.DotNet.Samples.WebAPI
         {
             Schema.Add<User>(File.ReadAllText("/schemas/User.1.0.schema.json"));
             Schema.Add<Group>(File.ReadAllText("/schemas/Group.1.0.schema.json"));
+            Schema.Add<Client>(File.ReadAllText("/schemas/Client.1.0.schema.json"));
             Schema.Add<Student>(File.ReadAllText("/schemas/Student.1.0.schema.json"));
         }
     }

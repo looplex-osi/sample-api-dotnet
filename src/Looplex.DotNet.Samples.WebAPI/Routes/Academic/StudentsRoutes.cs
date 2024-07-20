@@ -9,7 +9,8 @@ namespace Looplex.DotNet.Samples.WebAPI.Routes.Academic
     {
         public static void UseStudentRoutes(this IEndpointRouteBuilder app)
         {
-            app.UseScimV2Routes<Student, IStudentService>(
+            app.UseScimV2Routes<IStudentService>(
+                "students",
                 DefaultScimV2RouteOptions.CreateFor<StudentService>());
         }
     }

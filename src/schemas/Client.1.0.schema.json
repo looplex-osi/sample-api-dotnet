@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ietf:params:scim:schemas:oauth:2.0:Client",
+  "title": "Client",
+  "description": "Client",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "A unique identifier for a SCIM resource as defined by the service provider."
+    },
+    "externalId": {
+      "type": "string",
+      "description": "A String that is an identifier for the resource as defined by the provisioning client."
+    },
+    "meta": {
+      "$ref": "#/$defs/scimV2meta"
+    },
+    "displayName": {
+      "type": "string"
+    },
+    "secret": {
+      "type": "string",
+      "writeOnly": true
+    },
+    "expirationTime": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "notBefore": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "id",
+    "displayName",
+    "secret",
+    "expirationTime",
+    "notBefore"
+  ],
+  "$defs": {
+    "scimV2meta": {
+      "type": "object",
+      "properties": {
+        "resourceType": {
+          "type": "string",
+          "description": "The name of the resource type of the resource.  This attribute has a mutability of `readOnly` and `caseExact` as `true`.",
+          "readonly": true
+        },
+        "created": {
+          "type": "string",
+          "description": "The `DateTimeOffset` that the resource was added to the service provider.  This attribute MUST be a DateTimeOffset ISO8601Z.",
+          "format": "date-time",
+          "readonly": true
+        },
+        "lastModified": {
+          "type": "string",
+          "description": "The most recent DateTimeOffset that the details of this resource were updated at the service provider.  If this resource has never been modified since its initial creation, the value MUST be the same as the value of `created`.",
+          "format": "date-time",
+          "readonly": true
+        },
+        "location": {
+          "type": "string",
+          "description": "The URI of the resource being returned.  This value MUST be the same as the `Content-Location` HTTP response header (see Section 3.1.4.2 of [RFC7231]).",
+          "format": "uri",
+          "readonly": true
+        },
+        "version": {
+          "type": "string",
+          "description": "The version of the resource being returned.  This value must be the same as the entity-tag (ETag) HTTP response header (see Sections 2.1 and 2.3 of [RFC7232]).",
+          "readonly": true
+        }
+      },
+      "required": []
+    },
+    "member": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string",
+          "description": "Identifier of the member of this Group."
+        },
+        "$ref": {
+          "type": "string",
+          "description": "The URI corresponding to a SCIM resource that is a member of this Group.",
+          "format": "uri"
+        },
+        "type": {
+          "type": "string",
+          "description": "A label indicating the type of resource, e.g., 'User' or 'Group'.",
+          "enum": [
+            "User",
+            "Group"
+          ]
+        }
+      },
+      "required": [
+        "value"
+      ]
+    }
+  }
+}
