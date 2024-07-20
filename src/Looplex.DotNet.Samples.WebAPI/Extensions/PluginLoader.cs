@@ -1,4 +1,4 @@
-﻿using Looplex.OpenForExtension.Plugins;
+﻿using Looplex.OpenForExtension.Abstractions.Plugins;
 
 namespace Looplex.DotNet.Samples.WebAPI.Extensions
 {

@@ -35,9 +35,9 @@ namespace Looplex.DotNet.Samples.WebAPI
                 .Build();
 
             var builder = WebApplication.CreateBuilder(args);
-
-            RegisterServices(builder.Services);
             
+            RegisterServices(builder.Services);
+
             ConfigureLogging(builder, configuration);
             ConfigureResponseCache(builder);
             //ConfigureTelemetry(builder);
