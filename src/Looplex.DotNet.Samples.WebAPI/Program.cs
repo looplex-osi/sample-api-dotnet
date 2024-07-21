@@ -1,4 +1,6 @@
+using System.Net;
 using Looplex.DotNet.Core.Application.Abstractions.Factories;
+using Looplex.DotNet.Core.Common.Utils;
 using Looplex.DotNet.Core.WebAPI.ExtensionMethods;
 using Looplex.DotNet.Middlewares.Clients.Domain.Entities.Clients;
 using Looplex.DotNet.Middlewares.OAuth2.ExtensionMethods;
@@ -57,7 +59,7 @@ namespace Looplex.DotNet.Samples.WebAPI
             app.UseUserRoutes(options: DefaultScimV2RouteOptions.CreateFor<UserService>());
             app.UseGroupRoutes(options: DefaultScimV2RouteOptions.CreateFor<GroupService>());
             app.UseStudentRoutes();
-
+            
             AddSchemas();
 
             app.UseHttpsRedirection();            
@@ -70,7 +72,7 @@ namespace Looplex.DotNet.Samples.WebAPI
             AcademicDependencyContainer.RegisterServices(services);
 
             RegisterMediatR(services);
-
+            
             services.AddCoreServices();
             services.AddClientsServices();
             services.AddScimV2Services();
