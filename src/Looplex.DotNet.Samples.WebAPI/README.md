@@ -33,6 +33,27 @@ Serilog
 https://serilog.net/
 https://www.c-sharpcorner.com/article/how-to-implement-serilog-in-asp-net-core-web-api/
 
+## Looplex Samples WebApi
+
+### Running on Visual Studio
+This project is ready to run/debug on docker (using docker-compose profile).
+
+After running the compose profile, you can access the api on https://localhost:8443/health
+
+### Running on terminal Windows
+
+Run this on the project root folder:
+```
+docker-compose -f "src/docker/docker-compose.yml" -f "src/docker/docker-compose.override.yml" -p dockercomposelooplexsampleswebapi --ansi never up -d
+```
+
+### Running on terminal MacOS
+
+Run this on the project root folder (TODO):
+```
+docker compose -f src/docker/docker-compose.yml -f src/docker/docker-compose.override.yml -p docker up -d
+```
+
 ## Configure HTTPS docker
 
 ### Windows
@@ -60,7 +81,6 @@ https://www.c-sharpcorner.com/article/how-to-implement-serilog-in-asp-net-core-w
    ```
    openssl req -new -key aspnetapp.key -out aspnetapp.csr
    openssl x509 -req -days 365 -in aspnetapp.csr -signkey aspnetapp.key -out aspnetapp.crt
-   
    ```
    When exporting the pfx, set looplex as password:
    ```
