@@ -41,6 +41,9 @@ namespace Looplex.DotNet.Samples.WebAPI
             
             RegisterServices(builder.Services);
 
+            builder.Services.AddHealthChecks()
+                .AddCheck<HealthCheck>("Default");
+            
             ConfigureLogging(builder, configuration);
             ConfigureResponseCache(builder);
             //ConfigureTelemetry(builder);
@@ -53,6 +56,8 @@ namespace Looplex.DotNet.Samples.WebAPI
             });
 
             var app = builder.Build();
+            
+            app.MapHealthChecks("/health");
             
             app.UseTokenRoute(["AuthorizationService.CreateAccessToken"]);
             app.UseClientRoutes(options: DefaultScimV2RouteOptions.CreateFor<ClientService>());
