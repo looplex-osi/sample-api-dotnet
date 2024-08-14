@@ -7,10 +7,10 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
-COPY ["samples/Looplex.DotNet.Samples.WebAPI/Looplex.DotNet.Samples.WebAPI.csproj", "samples/Looplex.DotNet.Samples.WebAPI/"]
+COPY ["Looplex.DotNet.Samples.WebAPI/Looplex.DotNet.Samples.WebAPI.csproj", "src/Looplex.DotNet.Samples.WebAPI/"]
 RUN dotnet restore "src/Looplex.DotNet.Samples.WebAPI/Looplex.DotNet.Samples.WebAPI.csproj"
 COPY . .
-WORKDIR "/src/samples/Looplex.DotNet.Samples.WebAPI"
+WORKDIR "/src/Looplex.DotNet.Samples.WebAPI"
 RUN dotnet build "Looplex.DotNet.Samples.WebAPI.csproj" -c Release -o /app/build
 
 FROM build AS publish

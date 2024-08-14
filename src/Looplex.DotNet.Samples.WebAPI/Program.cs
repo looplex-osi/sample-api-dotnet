@@ -62,7 +62,7 @@ namespace Looplex.DotNet.Samples.WebAPI
             
             AddSchemas();
 
-            app.UseHttpsRedirection();            
+            app.UseHttpsRedirection();
 
             app.Run();
         }
