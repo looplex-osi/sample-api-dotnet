@@ -17,4 +17,11 @@
     <ProjectReference Include="..\Looplex.DotNet.Samples.Academic.Domain\Looplex.DotNet.Samples.Academic.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="Data\Queries\GetSchoolSubjectsQueryHandler.cs" />
+    <Compile Remove="Data\Queries\GetSchoolSubjectsStudentQueryHandler.cs" />
+    <Compile Remove="Data\Commands\RegisterStudentToSchoolSubjectCommandHandler.cs" />
+    <Compile Remove="Data\Commands\CreateSchoolSubjectCommandHandler.cs" />
+  </ItemGroup>
+
 </Project>

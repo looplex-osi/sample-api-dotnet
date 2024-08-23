@@ -6,8 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Looplex.DotNet.Core.Domain" Version="1.0.16" />
-    <PackageReference Include="Looplex.DotNet.Middlewares.ScimV2" Version="1.0.23" />
+    <PackageReference Include="Looplex.DotNet.Core.Domain" Version="1.0.18" />
+    <PackageReference Include="Looplex.DotNet.Middlewares.ScimV2" Version="1.2.2" />
     <PackageReference Include="Looplex.OpenForExtension.Abstractions" Version="1.1.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
   </ItemGroup>
@@ -16,6 +16,19 @@
     <None Update="Entities\Schemas\Student.1.0.schema.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Remove="Entities\SchoolSubjects\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Queries\GetSchoolSubjectsQuery.cs" />
+    <Compile Remove="Queries\GetSchoolSubjectStudentsQuery.cs" />
+    <Compile Remove="Entities\SchoolSubjects\**" />
+    <Compile Remove="Commands\CreateSchoolSubjectCommand.cs" />
+    <Compile Remove="Commands\RegisterStudentToSchoolSubjectCommand.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="Entities\SchoolSubjects\**" />
   </ItemGroup>
 
 </Project>

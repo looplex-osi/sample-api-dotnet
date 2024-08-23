@@ -1,0 +1,9 @@
+version: '3.4'
+
+services:
+  sample.api.dotnet.db.test:
+    environment:
+     - SA_PASSWORD=!ooplex_D0tNet!s@
+     - ACCEPT_EULA=Y
+    ports:
+      - "1434:1433"

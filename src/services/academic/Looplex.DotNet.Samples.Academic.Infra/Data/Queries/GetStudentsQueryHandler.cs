@@ -23,7 +23,7 @@ namespace Looplex.DotNet.Samples.Academic.Infra.Data.Queries
             var page = (int)request.Context.State.Pagination.Page;
             var perPage = (int)request.Context.State.Pagination.PerPage;
 
-            var select = "id, registrationid, userid";
+            var select = "cast(id as varchar(36)) as id, registrationid, cast(userid as varchar(36)) as userid";
             var where = "";
             var orderBy = "id DESC";
 

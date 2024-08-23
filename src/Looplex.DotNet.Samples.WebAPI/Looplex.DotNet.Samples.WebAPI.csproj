@@ -12,14 +12,12 @@
 
   <ItemGroup>
     <PackageReference Include="Looplex.OpenForExtension" Version="1.1.1" />
-    <PackageReference Include="Looplex.DotNet.Core.Infra" Version="1.0.16" />
-    <PackageReference Include="Looplex.DotNet.Core.Middlewares" Version="1.0.16" />
-    <PackageReference Include="Looplex.DotNet.Core.WebAPI" Version="1.0.16" />
-    <PackageReference Include="Looplex.DotNet.Middlewares.Clients" Version="1.0.23" />
-    <PackageReference Include="Looplex.DotNet.Middlewares.OAuth2" Version="1.0.23" />
-    <PackageReference Include="Looplex.DotNet.Middlewares.ScimV2" Version="1.0.23" />
-    <PackageReference Include="Looplex.DotNet.Services.Clients.InMemory" Version="1.0.11" />
-    <PackageReference Include="Looplex.DotNet.Services.ScimV2.InMemory" Version="1.0.11" />
+    <PackageReference Include="Looplex.DotNet.Core.Infra" Version="1.0.18" />
+    <PackageReference Include="Looplex.DotNet.Core.Middlewares" Version="1.0.18" />
+    <PackageReference Include="Looplex.DotNet.Core.WebAPI" Version="1.0.18" />
+    <PackageReference Include="Looplex.DotNet.Middlewares.Clients" Version="1.2.2" />
+    <PackageReference Include="Looplex.DotNet.Services.Clients.InMemory" Version="1.1.2" />
+    <PackageReference Include="Looplex.DotNet.Services.ScimV2.InMemory" Version="1.1.2" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
     <PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.9.0" />

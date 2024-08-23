@@ -17,12 +17,15 @@ namespace Looplex.DotNet.Samples.Academic.Infra.Data.Commands
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var query = "insert into students (registrationid, userid) output inserted.id values (@RegistrationId, @UserId)";
+            if (string.IsNullOrEmpty(request.Student.Id)) request.Student.Id = Guid.NewGuid().ToString();
+            
+            var query = "insert into students (id, registrationid, userid) values (@Id, @RegistrationId, @UserId)";
 
             using var connection = _context.CreateConnection();
 
-            var id = await connection.QueryFirstOrDefaultAsync<int>(query, new { request.Student.RegistrationId, request.Student.UserId });
-            request.Student.Id = id.ToString();
+            await connection.ExecuteAsync(
+                query,
+                new { request.Student.Id, request.Student.RegistrationId, request.Student.UserId });
         }
     }
 }

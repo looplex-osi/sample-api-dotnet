@@ -22,6 +22,11 @@ namespace Looplex.DotNet.Samples.Academic.Application.Services
             throw new System.NotImplementedException();
         }
 
+        public Task PatchAsync(IContext context, CancellationToken cancellationToken)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public Task DeleteAsync(IContext context, CancellationToken cancellationToken)
         {
             throw new System.NotImplementedException();

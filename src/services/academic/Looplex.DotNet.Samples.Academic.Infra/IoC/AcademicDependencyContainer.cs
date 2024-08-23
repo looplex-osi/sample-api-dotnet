@@ -8,8 +8,6 @@ namespace Looplex.DotNet.Samples.Academic.Infra.IoC
     {
         public static void RegisterServices(IServiceCollection services)
         {
-            services.AddScoped<IRegistrationService, RegistrationService>();
-            services.AddScoped<ISchoolSubjectService, SchoolSubjectService>();
             services.AddScoped<IStudentService, StudentService>();
         }
     }

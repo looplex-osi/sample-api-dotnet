@@ -88,3 +88,13 @@ docker compose -f src/docker/docker-compose.yml -f src/docker/docker-compose.ove
    openssl pkcs12 -in aspnetapp.pfx -out aspnetapp.pem -nodes
    sudo security import aspnetapp.pem -k /Library/Keychains/System.keychain
    ```
+   
+## Running the tests
+
+The integration tests will up a sql container and run the migration:
+
+```
+npm run test
+```
+
+After the tests are run, the container and data volume will be deleted. 

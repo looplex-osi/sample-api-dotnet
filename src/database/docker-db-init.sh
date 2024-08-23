@@ -1,4 +1,4 @@
-﻿#!/bin/bash
+#!/bin/bash
 
 #wait for the SQL Server to come up
 sleep 30s

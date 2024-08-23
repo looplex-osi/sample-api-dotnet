@@ -1,6 +1,4 @@
-using System.Net;
 using Looplex.DotNet.Core.Application.Abstractions.Factories;
-using Looplex.DotNet.Core.Common.Utils;
 using Looplex.DotNet.Core.WebAPI.ExtensionMethods;
 using Looplex.DotNet.Middlewares.Clients.Domain.Entities.Clients;
 using Looplex.DotNet.Middlewares.OAuth2.ExtensionMethods;
