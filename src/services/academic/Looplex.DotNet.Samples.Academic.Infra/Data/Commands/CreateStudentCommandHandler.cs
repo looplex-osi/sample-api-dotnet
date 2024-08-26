@@ -4,15 +4,8 @@ using Looplex.DotNet.Samples.Academic.Domain.Commands;
 
 namespace Looplex.DotNet.Samples.Academic.Infra.Data.Commands
 {
-    public class CreateStudentCommandHandler : ICommandHandler<CreateStudentCommand>
+    public class CreateStudentCommandHandler(IDatabaseContext context) : ICommandHandler<CreateStudentCommand>
     {
-        private readonly IDatabaseContext _context;
-
-        public CreateStudentCommandHandler(IDatabaseContext context)
-        {
-            _context = context;
-        }
-
         public async Task Handle(CreateStudentCommand request, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -21,7 +14,7 @@ namespace Looplex.DotNet.Samples.Academic.Infra.Data.Commands
             
             var query = "insert into students (id, registrationid, userid) values (@Id, @RegistrationId, @UserId)";
 
-            using var connection = _context.CreateConnection();
+            using var connection = context.CreateConnection();
 
             await connection.ExecuteAsync(
                 query,
