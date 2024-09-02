@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.Dynamic;
 using FluentAssertions;
 using Looplex.DotNet.Core.Common.Exceptions;
@@ -109,27 +110,91 @@ public class StudentServiceTests
 
         // Assert
         await _mediator.Received(1)
-            .Send(Arg.Is<CreateStudentCommand>(c => AssertThatStudentIsValid(c.Student)), Arg.Any<CancellationToken>());
+            .Send(Arg.Is<CreateStudentCommand>(c => AssertThatCreateStudentIsValid(c.Student)), Arg.Any<CancellationToken>());
     }
 
-    private bool AssertThatStudentIsValid(Student student)
+    private bool AssertThatCreateStudentIsValid(Student student)
     {
         Assert.AreEqual(student.RegistrationId, "TestStudent1");
         return true;
     }
 
     [TestMethod]
-    public void PatchAsync_ShouldThrowException_OperationFailed()
+    public async Task PatchAsync_ShouldThrowException_OperationFailed()
     {
-        // TODO
+        // Arrange
+        var existingUser = new Student()
+        {
+            Id = 1,
+            UniqueId = Guid.NewGuid(),
+            RegistrationId = "reg1"
+        };
+        _mediator.Send(Arg.Any<GetStudentByIdQuery>(), Arg.Any<CancellationToken>())
+            .Returns(existingUser);
+        _context.State.Operations = "[ { \"op\": \"add\", \"path\": \"InvalidPath\", \"value\": \"Updated Reg\" } ]";
+        _context.State.Id = existingUser.UniqueId.ToString()!;
+        _context.Roles["Student"] = existingUser;
+        // Act
+        var action = () => _studentService.PatchAsync(_context, _cancellationToken);
+
+        // Assert
+        var ex = await Assert.ThrowsExceptionAsync<ArgumentException>(() => action());
+        Assert.AreEqual("InvalidPath", ex.ParamName);
     }
     
     [TestMethod]
-    public void PatchAsync_ShouldApplyOperationsToStudent()
+    public async Task PatchAsync_ShouldApplyOperationsToStudent()
     {
-        // TODO
+        // Arrange
+        var existingUser = new Student()
+        {
+            Id = 1,
+            UniqueId = Guid.NewGuid(),
+            RegistrationId = "reg1",
+            Projects = new ObservableCollection<Project>
+            {
+                new()
+                {
+                    Name = "Project1"
+                },
+                new()
+                {
+                    Name = "Project2"
+                }
+            }
+        };
+        _mediator.Send(Arg.Any<GetStudentByIdQuery>(), Arg.Any<CancellationToken>())
+            .Returns(existingUser);
+        _context.State.Operations = @"[ 
+            { ""op"": ""add"", ""path"": ""RegistrationId"", ""value"": ""Updated Reg"" },
+            { ""op"": ""add"", ""path"": ""Projects[Name eq \""Project1\""].Name"", ""value"": ""Project3"" },
+            { ""op"": ""add"", ""path"": ""Projects"", ""value"": { ""Name"": ""ProjectNew"" } },
+            { ""op"": ""remove"", ""path"": ""Projects[Name eq \""Project2\""]"" }
+        ]";
+        _context.State.Id = existingUser.UniqueId.ToString()!;
+
+        // Act
+        await _studentService.PatchAsync(_context, _cancellationToken);
+
+        // Assert
+        await _mediator.Received(1).Send(
+            Arg.Is<UpdateStudentCommand>(c => AssertThatPatchStudentIsValid(c.Student)),
+            Arg.Any<CancellationToken>());
     }
-    
+
+    private bool AssertThatPatchStudentIsValid(Student student)
+    {
+        Assert.AreEqual("Updated Reg", student.RegistrationId);
+        Assert.AreEqual("Project3", student.Projects[0].Name);
+        student.ChangedProperties.Should().BeEquivalentTo(["RegistrationId"]);
+        student.Projects[0].ChangedProperties.Should().BeEquivalentTo(["Name"]);
+        Assert.IsTrue(student.AddedItems.ContainsKey("Projects"));
+        student.AddedItems["Projects"].Should().BeEquivalentTo([new Project() { Name = "ProjectNew" }]);
+        Assert.IsTrue(student.RemovedItems.ContainsKey("Projects"));
+        student.RemovedItems["Projects"].Should().BeEquivalentTo([new Project() { Name = "Project2" }]);
+        return true;
+    }
+
     [TestMethod]
     public async Task DeleteAsync_ShouldThrowEntityNotFoundException_WhenStudentDoesNotExist()
     {

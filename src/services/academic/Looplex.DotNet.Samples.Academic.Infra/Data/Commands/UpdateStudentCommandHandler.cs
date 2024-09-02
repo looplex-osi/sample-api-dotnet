@@ -1,18 +1,64 @@
-﻿using Looplex.DotNet.Core.Application.Abstractions.Commands;
+﻿using System.Data.Common;
+using Looplex.DotNet.Core.Application.Abstractions.Commands;
 using Looplex.DotNet.Core.Application.Abstractions.DataAccess;
+using Looplex.DotNet.Core.Common.Exceptions;
 using Looplex.DotNet.Samples.Academic.Domain.Commands;
+using Looplex.DotNet.Samples.Academic.Domain.Entities.Students;
 
 namespace Looplex.DotNet.Samples.Academic.Infra.Data.Commands
 {
     public class UpdateStudentCommandHandler(IDatabaseContext context) : ICommandHandler<UpdateStudentCommand>
     {
+        private static readonly Dictionary<string, string> StudentColumns = new()
+        {
+            { "RegistrationId", "registration_id" },
+        };
+        
+        private static readonly Dictionary<string, string> ProjectsColumns = new()
+        {
+            { "Name", "name" },
+        };
+        
         public async Task Handle(UpdateStudentCommand request, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            // TODO
+            using var connection = context.CreateConnection();
+            connection.Open();
+            await using var transaction = connection.BeginTransaction();
 
-            throw new NotImplementedException();
+            await UpdateStudentIfNecessaryAsync(request.Student, connection, transaction);
+            
+            // TODO
+            
+            await transaction.CommitAsync(cancellationToken);
+        }
+
+        private async Task UpdateStudentIfNecessaryAsync(Student student, IDatabaseConnection connection, DbTransaction transaction)
+        {
+            if (student.ChangedProperties.Count > 0)
+            {
+                var parameters = new Dictionary<string, object>();
+                var studentType = typeof(Student);
+                var update = "UPDATE students SET ";
+                var sets = new List<string>();
+                foreach (var changedProperty in student.ChangedProperties)
+                {
+                    sets.Add($"{StudentColumns[changedProperty]} = @{changedProperty}");
+                    parameters[$"{changedProperty}"] = studentType.GetProperty(changedProperty)!.GetValue(student)!;
+                }
+                parameters.Add("UniqueId", student.UniqueId!.Value);
+                var where = "WHERE uuid = @UniqueId";
+
+                var query = $@"
+                    {update}
+                    {string.Join(',', sets)}
+                    {where}
+                ";
+
+                var count = await connection.ExecuteAsync(query, parameters, transaction);
+                if (count == 0) throw new EntityNotFoundException(nameof(Student), student.UniqueId!.Value.ToString());
+            }
         }
     }
 }

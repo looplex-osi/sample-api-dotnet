@@ -14,6 +14,7 @@ using Looplex.DotNet.Samples.Academic.Domain.Entities.Students;
 using Looplex.OpenForExtension.Abstractions.Commands;
 using Looplex.OpenForExtension.Abstractions.Contexts;
 using Looplex.OpenForExtension.Abstractions.ExtensionMethods;
+using ScimPatch;
 
 namespace Looplex.DotNet.Samples.Academic.Application.Services
 {
@@ -117,9 +118,49 @@ namespace Looplex.DotNet.Samples.Academic.Application.Services
             context.Plugins.Execute<IReleaseUnmanagedResources>(context, cancellationToken);
         }
 
-        public Task PatchAsync(IContext context, CancellationToken cancellationToken)
+        public async Task PatchAsync(IContext context, CancellationToken cancellationToken)
         {
-            throw new System.NotImplementedException();
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var json = context.GetRequiredValue<string>("Operations");
+            await GetByIdAsync(context, cancellationToken);
+            var student = (Student)context.Roles["Student"];
+            var operations = OperationTracker.FromJson(student, json);
+            context.Plugins.Execute<IHandleInput>(context, cancellationToken);
+
+            if (operations.Count == 0)
+            {
+                throw new InvalidOperationException("List of operations can't be empty.");
+            }
+            context.Plugins.Execute<IValidateInput>(context, cancellationToken);
+
+            context.Roles["Operations"] = operations;
+            context.Plugins.Execute<IDefineRoles>(context, cancellationToken);
+
+            context.Plugins.Execute<IBind>(context, cancellationToken);
+
+            context.Plugins.Execute<IBeforeAction>(context, cancellationToken);
+
+            if (!context.SkipDefaultAction)
+            {
+                foreach (var operationNode in context.Roles["Operations"])
+                {
+                    if (!await operationNode.TryApplyAsync())
+                    {
+                        throw operationNode.OperationException;
+                    }
+                }
+
+                var command = new UpdateStudentCommand
+                {
+                    Student = student
+                };
+                await _mediator.Send(command, cancellationToken);
+            }
+
+            context.Plugins.Execute<IAfterAction>(context, cancellationToken);
+
+            context.Plugins.Execute<IReleaseUnmanagedResources>(context, cancellationToken);
         }
 
         public async Task DeleteAsync(IContext context, CancellationToken cancellationToken)
