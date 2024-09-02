@@ -57,7 +57,7 @@ namespace Looplex.DotNet.Samples.Academic.Application.Services
 
             var getStudentByIdQuery = new GetStudentByIdQuery
             {
-                Id = id.ToString()
+                UniqueId = id
             };
             var student = await _mediator.Send(getStudentByIdQuery, cancellationToken);
             if (student == null)
@@ -147,7 +147,7 @@ namespace Looplex.DotNet.Samples.Academic.Application.Services
             {
                 var command = new DeleteStudentCommand
                 {
-                    Id = id.ToString()
+                    UniqueId = id
                 };
                 await _mediator.Send(command, cancellationToken);
             }

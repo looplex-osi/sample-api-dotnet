@@ -15,13 +15,22 @@ public class CreateStudentCommandHandlerTest : IntegrationTestsBase
     {
         // Arrange
         var createStudentCommandHandler = new CreateStudentCommandHandler(DatabaseContext);
-        var id = Guid.NewGuid().ToString();
         var createStudentCommand = new CreateStudentCommand
         {   
             Student = new Student
             {
                 RegistrationId = Guid.NewGuid().ToString(),
-                Id = id
+                Projects = new List<Project>()
+                {
+                    new()
+                    {
+                       Name = "Project1",
+                    },
+                    new()
+                    {
+                        Name = "Project2",
+                    },
+                }
             }
         };
 
@@ -32,11 +41,14 @@ public class CreateStudentCommandHandlerTest : IntegrationTestsBase
         var getStudentByIdQueryHandler = new GetStudentByIdQueryHandler(DatabaseContext);
         var getStudentByIdQuery = new GetStudentByIdQuery
         {
-            Id = id
+            UniqueId = createStudentCommand.Student.UniqueId!.Value
         };
         var student = await getStudentByIdQueryHandler.Handle(getStudentByIdQuery, CancellationToken.None);
         Assert.IsNotNull(student);
         Assert.AreEqual(createStudentCommand.Student.RegistrationId, student.RegistrationId);
         Assert.AreEqual(createStudentCommand.Student.UserId, student.UserId);
+        Assert.AreEqual(2, student.Projects.Count);
+        Assert.AreEqual("Project1", student.Projects[0].Name);
+        Assert.AreEqual("Project2", student.Projects[1].Name);
     }
 }

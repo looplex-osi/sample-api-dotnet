@@ -22,8 +22,8 @@ namespace Looplex.DotNet.Samples.Academic.Infra.Data.Queries
 
             var page = (int)request.Context.State.Pagination.Page;
             var perPage = (int)request.Context.State.Pagination.PerPage;
-
-            var select = "cast(id as varchar(36)) as id, registrationid, cast(userid as varchar(36)) as userid";
+            
+            var select = "id Id, uuid UniqueId, registration_id RegistrationId, user_id UserId";
             var where = "";
             var orderBy = "id DESC";
 
@@ -43,15 +43,39 @@ namespace Looplex.DotNet.Samples.Academic.Infra.Data.Queries
                 OFFSET @offset ROWS
                     FETCH NEXT @perPage ROWS ONLY";
 
-            var records = await connection.QueryAsync<Student>(query, new { offset = PaginationUtils.GetOffset(perPage, page), perPage });
+            var students = (await connection
+                .QueryAsync<Student>(query, new { offset = PaginationUtils.GetOffset(perPage, page), perPage }))
+                .ToList();
+            
+            if (students.Count > 0)
+            {
+                select = "id Id, uuid UniqueId, student_id StudentId, name Name"; 
+                where = "student_id IN @Ids";
+                orderBy = "id DESC";
+                
+                query = @$"
+                SELECT {select} FROM projects
+                WHERE {where}
+                ORDER BY {orderBy}
+                ";
+                
+                var projects = (await connection
+                    .QueryAsync<Project>(query, new { Ids = students.Select(r => r.Id) }))
+                    .ToList();
 
+                foreach (var student in students)
+                {
+                    student.Projects = projects.Where(p => p.StudentId == student.Id).ToList();
+                }
+            }
+            
             request.Context.State.Pagination.TotalCount = count;
             return new PaginatedCollection
             {
                 Page = page,
                 PerPage = perPage,
                 TotalCount = count,
-                Records = records.Select(r => (object)r).ToList(),
+                Records = students.Select(r => (object)r).ToList(),
             };
         }
     }

@@ -6,7 +6,9 @@
   "scripts": {
     "commit": "cz",
     "prepare": "husky",
-    "test": "docker compose -f \"test/docker/docker-compose.yml\" -f \"test/docker/docker-compose.override.yml\" -p dockercomposelooplexsampleswebapitest up -d && echo \"Waiting 30s for the container to up...\" && sleep 30 && dotnet test && docker-compose -p dockercomposelooplexsampleswebapitest down && docker volume rm dockercomposelooplexsampleswebapitest_dbdata-test"
+    "test": "docker compose -f \"test/docker/docker-compose.yml\" -f \"test/docker/docker-compose.override.yml\" -p dockercomposelooplexsampleswebapitest up -d && echo \"Waiting 30s for the container to up...\" && sleep 30 && docker exec -it sample-api-dotnet-db-test bash -c \"/db-migration.sh\" && dotnet test && docker-compose -p dockercomposelooplexsampleswebapitest down && docker volume rm dockercomposelooplexsampleswebapitest_dbdata-test",
+    "test-down": "docker compose -p dockercomposelooplexsampleswebapitest down",
+    "test-clean": "docker volume rm dockercomposelooplexsampleswebapitest_dbdata-test"
   },
   "keywords": [],
   "author": "Fabio Zendhi Nagao",

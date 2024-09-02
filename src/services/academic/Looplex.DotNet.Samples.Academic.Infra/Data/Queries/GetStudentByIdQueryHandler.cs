@@ -12,8 +12,8 @@ namespace Looplex.DotNet.Samples.Academic.Infra.Data.Queries
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var select = "cast(id as varchar(36)) as id, registrationid, cast(userid as varchar(36)) as userid";
-            var where = "id = @Id";
+            var select = "id Id, uuid UniqueId, registration_id RegistrationId, user_id UserId";
+            var where = "uuid = @Id";
 
             var query = @$"
                 SELECT {select} FROM students
@@ -22,9 +22,21 @@ namespace Looplex.DotNet.Samples.Academic.Infra.Data.Queries
 
             using var connection = context.CreateConnection();
 
-            var record = await connection.QueryFirstOrDefaultAsync<Student>(query, new { request.Id });
-
-            return record ?? throw new EntityNotFoundException(nameof(Student), request.Id);;
+            var record = await connection.QueryFirstOrDefaultAsync<Student>(query, new { Id = request.UniqueId });
+            if (record == null)
+                throw new EntityNotFoundException(nameof(Student), request.UniqueId.ToString());
+            
+            select = "id Id, uuid UniqueId, student_id StudentId, name Name"; 
+            where = "student_id = @Id";
+            
+            query = @$"
+                SELECT {select} FROM projects
+                WHERE {where}
+                ";
+            var records = await connection.QueryAsync<Project>(query, new { Id = record.Id });
+            
+            record.Projects = records.ToList();
+            return record;
         }
     }
 }

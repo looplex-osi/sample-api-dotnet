@@ -16,29 +16,38 @@ public class GetStudentByIdQueryHandlerTests : IntegrationTestsBase
     {
         // Arrange
         var getStudentByIdQueryHandler = new GetStudentByIdQueryHandler(DatabaseContext);
-        var id = Guid.NewGuid().ToString();
-        var getStudentByIdQuery = new GetStudentByIdQuery
-        {
-            Id = id
-        };
-
         var createStudentCommandHandler = new CreateStudentCommandHandler(DatabaseContext);
         var createStudentCommand = new CreateStudentCommand
         {   
             Student = new Student
             {
                 RegistrationId = "test",
-                Id = id
+                Projects = new List<Project>()
+                {
+                    new()
+                    {
+                        Name = "Project1",
+                    },
+                    new()
+                    {
+                        Name = "Project2",
+                    },
+                }
             }
         };
         await createStudentCommandHandler.Handle(createStudentCommand, CancellationToken.None);
-
+        var getStudentByIdQuery = new GetStudentByIdQuery
+        {
+            UniqueId = createStudentCommand.Student.UniqueId!.Value
+        };
+        
         // Act
         var student = await getStudentByIdQueryHandler.Handle(getStudentByIdQuery, CancellationToken.None);
 
         // Assert
         Assert.IsNotNull(student);
-        Assert.AreEqual(id, student.Id.ToLower());
+        Assert.IsNotNull(student.Id);
+        Assert.IsNotNull(student.UniqueId);
         Assert.AreEqual("test", student.RegistrationId);
     }
     
@@ -47,10 +56,10 @@ public class GetStudentByIdQueryHandlerTests : IntegrationTestsBase
     {
         // Arrange
         var getStudentByIdQueryHandler = new GetStudentByIdQueryHandler(DatabaseContext);
-        var id = Guid.NewGuid().ToString();
+        var id = Guid.NewGuid();
         var getStudentByIdQuery = new GetStudentByIdQuery
         {
-            Id = id
+            UniqueId = id
         };
 
         using var connection = DatabaseContext.CreateConnection();

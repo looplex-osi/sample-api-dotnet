@@ -10,15 +10,41 @@ namespace Looplex.DotNet.Samples.Academic.Infra.Data.Commands
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            if (string.IsNullOrEmpty(request.Student.Id)) request.Student.Id = Guid.NewGuid().ToString();
-            
-            var query = "insert into students (id, registrationid, userid) values (@Id, @RegistrationId, @UserId)";
+            var query = @"
+                insert into students (registration_id, user_id) 
+                output inserted.id, inserted.uuid
+                values (@RegistrationId, @UserId)";
 
             using var connection = context.CreateConnection();
-
-            await connection.ExecuteAsync(
+            connection.Open();
+            await using var transaction = connection.BeginTransaction();
+            
+            var (id, uniqueId) = await connection.QueryFirstOrDefaultAsync<(int, Guid)>(
                 query,
-                new { request.Student.Id, request.Student.RegistrationId, request.Student.UserId });
+                new { request.Student.RegistrationId, request.Student.UserId },
+                transaction);
+
+            request.Student.Id = id;
+            request.Student.UniqueId = uniqueId;
+
+            foreach (var project in request.Student.Projects)
+            {
+                query = @"
+                    insert into projects (student_id, name)
+                    output inserted.id, inserted.uuid
+                    values (@StudentId, @Name)";
+                
+                var ids = await connection.QueryFirstOrDefaultAsync<(int, Guid)>(
+                    query,
+                    new { StudentId = id , project.Name },
+                    transaction);
+                
+                project.Id = ids.Item1;
+                project.UniqueId = ids.Item2;
+                project.StudentId = id;
+            }
+            
+            await transaction.CommitAsync(cancellationToken);
         }
     }
 }

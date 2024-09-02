@@ -19,13 +19,13 @@ namespace Looplex.DotNet.Samples.Academic.Infra.Data.Commands
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var query = "DELETE FROM students WHERE Id = @Id";
+            var query = "DELETE FROM students WHERE uuid = @UniqueId";
 
             using var connection = _context.CreateConnection();
             
-            var count = await connection.ExecuteAsync(query, new { request.Id });
+            var count = await connection.ExecuteAsync(query, new { request.UniqueId });
 
-            if (count == 0) throw new EntityNotFoundException(nameof(Student), request.Id);
+            if (count == 0) throw new EntityNotFoundException(nameof(Student), request.UniqueId.ToString());
         }
     }
 }

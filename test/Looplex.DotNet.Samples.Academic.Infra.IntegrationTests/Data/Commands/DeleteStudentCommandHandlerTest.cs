@@ -14,30 +14,39 @@ public class DeleteStudentCommandHandlerTest : IntegrationTestsBase
     {
         // Arrange
         var deleteStudentCommandHandler = new DeleteStudentCommandHandler(DatabaseContext);
-        var id = Guid.NewGuid().ToString();
-        var deleteStudentCommand = new DeleteStudentCommand
-        {
-            Id = id
-        };
-
         var createStudentCommandHandler = new CreateStudentCommandHandler(DatabaseContext);
         var createStudentCommand = new CreateStudentCommand
         {   
             Student = new Student
             {
-                RegistrationId = "test",
-                Id = id
+                RegistrationId = Guid.NewGuid().ToString(),
+                Projects = new List<Project>()
+                {
+                    new()
+                    {
+                        Name = "Project1",
+                    },
+                    new()
+                    {
+                        Name = "Project2",
+                    },
+                }
             }
         };
         await createStudentCommandHandler.Handle(createStudentCommand, CancellationToken.None);
 
+        var deleteStudentCommand = new DeleteStudentCommand
+        {
+            UniqueId = createStudentCommand.Student.UniqueId!.Value
+        };
+        
         // Act
         await deleteStudentCommandHandler.Handle(deleteStudentCommand, CancellationToken.None);
 
         // Assert
         using var connection = DatabaseContext.CreateConnection();
         
-        var count = await connection.QueryFirstOrDefaultAsync<int>($"select top 1 1 from students where id = @id", new { id });
+        var count = await connection.QueryFirstOrDefaultAsync<int>($"select top 1 1 from students where uuid = @UniqueId", new { deleteStudentCommand.UniqueId });
         Assert.AreEqual(0, count);
     }
     
@@ -46,10 +55,10 @@ public class DeleteStudentCommandHandlerTest : IntegrationTestsBase
     {
         // Arrange
         var deleteStudentCommandHandler = new DeleteStudentCommandHandler(DatabaseContext);
-        var id = Guid.NewGuid().ToString();
+        var id = Guid.NewGuid();
         var deleteStudentCommand = new DeleteStudentCommand
         {
-            Id = id
+            UniqueId = id
         };
         
         // Act

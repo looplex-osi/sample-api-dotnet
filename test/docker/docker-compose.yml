@@ -6,15 +6,11 @@ services:
       context: ../..
     image: mcr.microsoft.com/mssql/server:2017-latest
     container_name: sample-api-dotnet-db-test
-    environment:
-      RUN_MIGRATION: "true"
-    command: /bin/bash ./entrypoint.sh
     networks:
       - looplex-test
     volumes:
       - dbdata-test:/var/opt/mssql/data
-      - ../../src/database/docker-entrypoint.sh:/entrypoint.sh
-      - ../../src/database/docker-db-init.sh:/db-init.sh
+      - ../../src/database/db-migration.sh:/db-migration.sh
       - ../../src/database/db-dump.sql:/db-dump.sql
       - ../../src/database/migrations:/migrations
 

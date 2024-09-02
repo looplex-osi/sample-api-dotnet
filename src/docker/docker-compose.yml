@@ -41,18 +41,15 @@ services:
       - looplex
     volumes:
       - ../schemas:/schemas
+    
   looplex.dotnet.samples.db:
     image: mcr.microsoft.com/mssql/server:2017-latest
     container_name: looplex-dotnet-samples-db
-    environment:
-      RUN_MIGRATION: "true"
-    command: /bin/bash ./entrypoint.sh
     networks:
       - looplex
     volumes:
       - dbdata:/var/opt/mssql/data
-      - ../database/docker-entrypoint.sh:/entrypoint.sh
-      - ../database/docker-db-init.sh:/db-init.sh
+      - ../database/db-migration.sh:/db-migration.sh
       - ../database/db-dump.sql:/db-dump.sql
       - ../database/migrations:/migrations
 

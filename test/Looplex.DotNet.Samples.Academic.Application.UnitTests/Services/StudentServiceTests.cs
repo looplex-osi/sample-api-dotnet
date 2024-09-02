@@ -45,7 +45,8 @@ public class StudentServiceTests
         _context.State.Pagination.PerPage = 10;
         var existingStudent = new Student
         {
-            Id = "student1"
+            Id = null,
+            UniqueId = Guid.NewGuid()
         };
         _mediator.Send(Arg.Any<GetStudentsQuery>(), Arg.Any<CancellationToken>())
             .Returns(new PaginatedCollection()
@@ -81,10 +82,11 @@ public class StudentServiceTests
         // Arrange
         var existingStudent = new Student
         {
-            Id = Guid.NewGuid().ToString()
+            Id = null,
+            UniqueId = Guid.NewGuid()
         };
-        _context.State.Id = existingStudent.Id;
-        _mediator.Send(Arg.Is<GetStudentByIdQuery>(q => q.Id == existingStudent.Id ), Arg.Any<CancellationToken>())
+        _context.State.Id = existingStudent.UniqueId.ToString()!;
+        _mediator.Send(Arg.Is<GetStudentByIdQuery>(q => q.UniqueId == existingStudent.UniqueId), Arg.Any<CancellationToken>())
             .Returns(existingStudent);
 
         // Act
@@ -98,8 +100,7 @@ public class StudentServiceTests
     public async Task CreateAsync_ShouldAddStudentToList()
     {
         // Arrange
-        var id = Guid.NewGuid().ToString();
-        var studentJson = $"{{ \"Id\": \"{id}\", \"RegistrationId\": \"TestStudent1\" }}";
+        var studentJson = $"{{ \"RegistrationId\": \"TestStudent1\" }}";
         _context.State.Resource = studentJson;
         Schema.Add<Student>("{}");
         
@@ -107,14 +108,12 @@ public class StudentServiceTests
         await _studentService.CreateAsync(_context, _cancellationToken);
 
         // Assert
-        Assert.AreEqual(id, _context.Result);
         await _mediator.Received(1)
-            .Send(Arg.Is<CreateStudentCommand>(c => AssertThatStudentIsValid(c.Student, id)), Arg.Any<CancellationToken>());
+            .Send(Arg.Is<CreateStudentCommand>(c => AssertThatStudentIsValid(c.Student)), Arg.Any<CancellationToken>());
     }
 
-    private bool AssertThatStudentIsValid(Student student, string expectedId)
+    private bool AssertThatStudentIsValid(Student student)
     {
-        Assert.AreEqual(student.Id, expectedId);
         Assert.AreEqual(student.RegistrationId, "TestStudent1");
         return true;
     }
@@ -147,10 +146,11 @@ public class StudentServiceTests
         // Arrange
         var existingStudent = new Student
         {
-            Id = Guid.NewGuid().ToString()
+            Id = 1,
+            UniqueId = Guid.NewGuid()
         };
-        _context.State.Id = existingStudent.Id;
-        _mediator.Send(Arg.Is<GetStudentByIdQuery>(q => q.Id == existingStudent.Id ), Arg.Any<CancellationToken>())
+        _context.State.Id = existingStudent.UniqueId.ToString()!;
+        _mediator.Send(Arg.Is<GetStudentByIdQuery>(q => q.UniqueId == existingStudent.UniqueId), Arg.Any<CancellationToken>())
             .Returns(existingStudent);
 
         // Act
@@ -158,6 +158,6 @@ public class StudentServiceTests
 
         // Assert
         await _mediator.Received(1)
-            .Send(Arg.Is<DeleteStudentCommand>(c => c.Id == existingStudent.Id), Arg.Any<CancellationToken>());
+            .Send(Arg.Is<DeleteStudentCommand>(c => c.UniqueId == existingStudent.UniqueId), Arg.Any<CancellationToken>());
     }
 }
