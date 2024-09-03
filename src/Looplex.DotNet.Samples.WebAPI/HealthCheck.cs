@@ -10,11 +10,12 @@ public class HealthCheck(IDatabaseContext databaseContext) : IHealthCheck
     {
         var isHealthy = true;
         var exceptions = new List<Exception>();
-        var services = new Dictionary<string, object>();
-        
-        services.Add("self", true);
+        var services = new Dictionary<string, object>
+        {
+            { "self", true },
+            { "db", true }
+        };
 
-        services.Add("db", true);
         if (!CheckDatabase(out var exception))
         {
             isHealthy = false;
@@ -25,7 +26,7 @@ public class HealthCheck(IDatabaseContext databaseContext) : IHealthCheck
         if (isHealthy)
         {
             return Task.FromResult(
-                HealthCheckResult.Healthy("A healthy result."));
+                HealthCheckResult.Healthy("A healthy result.", services));
         }
         return Task.FromResult(
             new HealthCheckResult(
