@@ -18,6 +18,8 @@ using Looplex.DotNet.Services.ScimV2.InMemory.ExtensionMethods;
 using Looplex.DotNet.Services.ScimV2.InMemory.Services;
 using MassTransit;
 using Looplex.DotNet.Middlewares.Clients.ExtensionMethods;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Newtonsoft.Json;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -55,7 +57,26 @@ namespace Looplex.DotNet.Samples.WebAPI
 
             var app = builder.Build();
             
-            app.MapHealthChecks("/health");
+            app.MapHealthChecks("/health", new HealthCheckOptions
+            {
+                ResponseWriter = async (context, report) =>
+                {
+                    context.Response.ContentType = "application/json";
+                    var result = JsonConvert.SerializeObject(new
+                    {
+                        status = report.Status.ToString(),
+                        results = report.Entries.Select(e => new
+                        {
+                            key = e.Key,
+                            status = e.Value.Status.ToString(),
+                            description = e.Value.Description,
+                            data = e.Value.Data,
+                            exception = e.Value.Exception?.Message // Include exception details
+                        })
+                    });
+                    await context.Response.WriteAsync(result);
+                }
+            });
             
             app.UseTokenRoute(["AuthorizationService.CreateAccessToken"]);
             app.UseClientRoutes(options: DefaultScimV2RouteOptions.CreateFor<ClientService>());
