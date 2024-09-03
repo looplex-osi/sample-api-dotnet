@@ -18,8 +18,11 @@ BEGIN
             CREATE TABLE students (
                 [id] int IDENTITY(-2147483648, 1) NOT NULL CONSTRAINT PK_students_id PRIMARY KEY CLUSTERED,
                 [uuid] uniqueidentifier NOT NULL CONSTRAINT DF_students_uuid DEFAULT NEWSEQUENTIALID(),
+                [external_id] varchar(255) NULL,
                 [registration_id] varchar(255) NOT NULL,
-                [user_id] int CONSTRAINT FK_students_users FOREIGN KEY REFERENCES users([id])
+                [user_id] int CONSTRAINT FK_students_users FOREIGN KEY REFERENCES users([id]),
+                [created_at] DATETIMEOFFSET NOT NULL CONSTRAINT DF_students_created_at DEFAULT (SYSDATETIMEOFFSET()), 
+                [updated_at] DATETIMEOFFSET NULL
             );
             CREATE NONCLUSTERED INDEX IN_students_uuid ON [dbo].[students](uuid) ON [PRIMARY];
         END;

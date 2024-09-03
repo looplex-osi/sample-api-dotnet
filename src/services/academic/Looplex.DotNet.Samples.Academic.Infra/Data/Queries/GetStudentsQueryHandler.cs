@@ -7,15 +7,9 @@ using Looplex.DotNet.Samples.Academic.Domain.Queries;
 
 namespace Looplex.DotNet.Samples.Academic.Infra.Data.Queries
 {
-    public class GetStudentsQueryHandler : IQueryHandler<GetStudentsQuery, PaginatedCollection>
+    public class GetStudentsQueryHandler(IDatabaseContext context)
+        : IQueryHandler<GetStudentsQuery, PaginatedCollection>
     {
-        private readonly IDatabaseContext _context;
-
-        public GetStudentsQueryHandler(IDatabaseContext context)
-        {
-            _context = context;
-        }
-
         public async Task<PaginatedCollection> Handle(GetStudentsQuery request, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -23,7 +17,7 @@ namespace Looplex.DotNet.Samples.Academic.Infra.Data.Queries
             var page = (int)request.Context.State.Pagination.Page;
             var perPage = (int)request.Context.State.Pagination.PerPage;
             
-            var select = "id Id, uuid UniqueId, registration_id RegistrationId, user_id UserId";
+            var select = "id, uuid, registration_id, user_id, created_at, updated_at";
             var where = "";
             var orderBy = "id DESC";
 
@@ -32,7 +26,7 @@ namespace Looplex.DotNet.Samples.Academic.Infra.Data.Queries
                 {where}
                 ";
 
-            using var connection = _context.CreateConnection();
+            using var connection = context.CreateConnection();
 
             int count = await connection.QueryFirstOrDefaultAsync<int>(query);
 
@@ -44,7 +38,18 @@ namespace Looplex.DotNet.Samples.Academic.Infra.Data.Queries
                     FETCH NEXT @perPage ROWS ONLY";
 
             var students = (await connection
-                .QueryAsync<Student>(query, new { offset = PaginationUtils.GetOffset(perPage, page), perPage }))
+                .QueryAsync<dynamic>(query, new { offset = PaginationUtils.GetOffset(perPage, page), perPage }))
+                .Select(r => new Student
+                {
+                    Id = r.id,
+                    UniqueId = r.uuid,
+                    RegistrationId = r.registration_id,
+                    Meta = new()
+                    {
+                        Created = r.created_at,
+                        LastModified = r.updated_at
+                    }
+                })
                 .ToList();
             
             if (students.Count > 0)

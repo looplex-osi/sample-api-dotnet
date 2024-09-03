@@ -6,22 +6,15 @@ using Looplex.DotNet.Samples.Academic.Domain.Entities.Students;
 
 namespace Looplex.DotNet.Samples.Academic.Infra.Data.Commands
 {
-    public class DeleteStudentCommandHandler : ICommandHandler<DeleteStudentCommand>
+    public class DeleteStudentCommandHandler(IDatabaseContext context) : ICommandHandler<DeleteStudentCommand>
     {
-        private readonly IDatabaseContext _context;
-
-        public DeleteStudentCommandHandler(IDatabaseContext context)
-        {
-            _context = context;
-        }
-
         public async Task Handle(DeleteStudentCommand request, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
             var query = "DELETE FROM students WHERE uuid = @UniqueId";
 
-            using var connection = _context.CreateConnection();
+            using var connection = context.CreateConnection();
             
             var count = await connection.ExecuteAsync(query, new { request.UniqueId });
 

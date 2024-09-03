@@ -12,7 +12,7 @@ namespace Looplex.DotNet.Samples.Academic.Infra.Data.Queries
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var select = "id Id, uuid UniqueId, registration_id RegistrationId, user_id UserId";
+            var select = "id, uuid, registration_id, user_id, created_at, updated_at";
             var where = "uuid = @Id";
 
             var query = @$"
@@ -22,10 +22,21 @@ namespace Looplex.DotNet.Samples.Academic.Infra.Data.Queries
 
             using var connection = context.CreateConnection();
 
-            var record = await connection.QueryFirstOrDefaultAsync<Student>(query, new { Id = request.UniqueId });
+            var record = await connection.QueryFirstOrDefaultAsync<dynamic>(query, new { Id = request.UniqueId });
             if (record == null)
                 throw new EntityNotFoundException(nameof(Student), request.UniqueId.ToString());
-            
+
+            var student = new Student
+            {
+                Id = record.id,
+                UniqueId = record.uuid,
+                RegistrationId = record.registration_id,
+                Meta = new()
+                {
+                    Created = record.created_at,
+                    LastModified = record.updated_at
+                }
+            };
             select = "id Id, uuid UniqueId, student_id StudentId, name Name"; 
             where = "student_id = @Id";
             
@@ -33,10 +44,10 @@ namespace Looplex.DotNet.Samples.Academic.Infra.Data.Queries
                 SELECT {select} FROM projects
                 WHERE {where}
                 ";
-            var records = await connection.QueryAsync<Project>(query, new { Id = record.Id });
+            var records = await connection.QueryAsync<Project>(query, new { Id = student.Id });
             
-            record.Projects = records.ToList();
-            return record;
+            student.Projects = records.ToList();
+            return student;
         }
     }
 }
