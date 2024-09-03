@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using Newtonsoft.Json;
@@ -8,7 +9,7 @@ namespace Looplex.DotNet.Samples.Academic.Domain.Entities.Students;
 public partial class Student
 {
     private string? _registrationId;
-    private string? _userId;
+    private int? _userId;
     private IList<Project> _projects = new ObservableCollection<Project>();
 
     [JsonProperty("registrationId")]
@@ -26,7 +27,7 @@ public partial class Student
     }
 
     [JsonProperty("userId")]
-    public string? UserId 
+    public int? UserId 
     {
         get => _userId;
         set

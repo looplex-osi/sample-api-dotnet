@@ -20,11 +20,16 @@
       "type": "string"
     },
     "userId": {
-      "type": "string"
+      "type": "integer"
+    },
+    "projects": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/project"
+      }
     }
   },
   "required": [
-    "id",
     "registrationId",
     "userId"
   ],
@@ -62,6 +67,17 @@
         }
       },
       "required": []
+    },
+    "project": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ]
     }
   }
 }

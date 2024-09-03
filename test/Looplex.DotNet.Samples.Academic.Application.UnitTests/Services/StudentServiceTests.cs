@@ -35,8 +35,10 @@ public class StudentServiceTests
         var roles = new Dictionary<string, dynamic>();
         _context.Roles.Returns(roles);
         _cancellationToken = new CancellationToken();
+        if (!Schema.Schemas.ContainsKey(typeof(Student)))
+            Schema.Add<Student>(File.ReadAllText("Entities/Schemas/Student.1.0.schema.json"));
     }
-
+    
     [TestMethod]
     public async Task GetAllAsync_ShouldReturnPaginatedCollection()
     {
@@ -101,9 +103,8 @@ public class StudentServiceTests
     public async Task CreateAsync_ShouldAddStudentToList()
     {
         // Arrange
-        var studentJson = $"{{ \"RegistrationId\": \"TestStudent1\" }}";
+        var studentJson = $"{{ \"registrationId\": \"TestStudent1\", \"userId\": 1 }}";
         _context.State.Resource = studentJson;
-        Schema.Add<Student>("{}");
         
         // Act
         await _studentService.CreateAsync(_context, _cancellationToken);
@@ -161,7 +162,8 @@ public class StudentServiceTests
                 {
                     Name = "Project2"
                 }
-            }
+            },
+            UserId = 1
         };
         _mediator.Send(Arg.Any<GetStudentByIdQuery>(), Arg.Any<CancellationToken>())
             .Returns(existingUser);
@@ -193,6 +195,48 @@ public class StudentServiceTests
         Assert.IsTrue(student.RemovedItems.ContainsKey("Projects"));
         student.RemovedItems["Projects"].Should().BeEquivalentTo([new Project() { Name = "Project2" }]);
         return true;
+    }
+    
+    [TestMethod]
+    public async Task PatchAsync_EntityIsInvalidAfterPatch_ThrowsEntityInvalidException()
+    {
+        // Arrange
+        var existingUser = new Student()
+        {
+            Id = 1,
+            UniqueId = Guid.NewGuid(),
+            RegistrationId = "reg1",
+            Projects = new ObservableCollection<Project>
+            {
+                new()
+                {
+                    Name = "Project1"
+                },
+                new()
+                {
+                    Name = "Project2"
+                }
+            }
+        };
+        _mediator.Send(Arg.Any<GetStudentByIdQuery>(), Arg.Any<CancellationToken>())
+            .Returns(existingUser);
+        _context.State.Operations = @"[ 
+            { ""op"": ""remove"", ""path"": ""RegistrationId"" },
+            { ""op"": ""remove"", ""path"": ""Projects[Name eq \""Project2\""].Name"" }
+        ]";
+        _context.State.Id = existingUser.UniqueId.ToString()!;
+
+        // Act
+        var action = () => _studentService.PatchAsync(_context, _cancellationToken);
+
+        // Assert
+        var ex = await Assert.ThrowsExceptionAsync<EntityInvalidException>(async () => await action());
+        Assert.AreEqual($"One or more validation errors occurred.", ex.Message);
+        ex.ErrorMessages.Should().Contain(m => m.IndexOf("registrationId") > 0);
+        ex.ErrorMessages.Should().Contain(m => m.IndexOf("projects[1].name") > 0);
+        await _mediator.DidNotReceive().Send(
+            Arg.Any<UpdateStudentCommand>(),
+            Arg.Any<CancellationToken>());
     }
 
     [TestMethod]

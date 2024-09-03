@@ -150,7 +150,12 @@ namespace Looplex.DotNet.Samples.Academic.Application.Services
                         throw operationNode.OperationException;
                     }
                 }
-
+                json = student.ToJson();
+                _ = Resource.FromJson<Student>(json, out var messages);
+                if (messages.Count > 0)
+                {
+                    throw new EntityInvalidException(messages.ToList());
+                }
                 var command = new UpdateStudentCommand
                 {
                     Student = student
