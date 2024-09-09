@@ -14,6 +14,7 @@ using Looplex.DotNet.Samples.Academic.Domain.Entities.Students;
 using Looplex.OpenForExtension.Abstractions.Commands;
 using Looplex.OpenForExtension.Abstractions.Contexts;
 using Looplex.OpenForExtension.Abstractions.ExtensionMethods;
+using MassTransit.Saga;
 using ScimPatch;
 
 namespace Looplex.DotNet.Samples.Academic.Application.Services

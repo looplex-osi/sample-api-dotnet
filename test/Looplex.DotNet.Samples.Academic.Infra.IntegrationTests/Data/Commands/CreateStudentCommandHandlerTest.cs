@@ -1,8 +1,8 @@
 using Looplex.DotNet.Samples.Academic.Domain.Commands;
 using Looplex.DotNet.Samples.Academic.Domain.Entities.Students;
 using Looplex.DotNet.Samples.Academic.Domain.Queries;
-using Looplex.DotNet.Samples.Academic.Infra.Data.Commands;
-using Looplex.DotNet.Samples.Academic.Infra.Data.Queries;
+using Looplex.DotNet.Samples.Academic.Infra.Data.CommandHandlers;
+using Looplex.DotNet.Samples.Academic.Infra.Data.QuerieHandlers;
 using Looplex.DotNet.Samples.WebAPI.IntegrationTests;
 
 namespace Looplex.DotNet.Samples.Academic.Infra.IntegrationTests.Data.Commands;

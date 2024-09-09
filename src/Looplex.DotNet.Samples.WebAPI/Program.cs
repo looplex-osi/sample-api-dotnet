@@ -7,7 +7,6 @@ using Looplex.DotNet.Middlewares.ScimV2.Domain.Entities.Schemas;
 using Looplex.DotNet.Middlewares.ScimV2.Domain.Entities.Users;
 using Looplex.DotNet.Middlewares.ScimV2.ExtensionMethods;
 using Looplex.DotNet.Samples.Academic.Domain.Entities.Students;
-using Looplex.DotNet.Samples.Academic.Infra.Data.Commands;
 using Looplex.DotNet.Samples.Academic.Infra.IoC;
 using Looplex.DotNet.Samples.WebAPI.Factories;
 using Looplex.DotNet.Samples.WebAPI.Routes;
@@ -93,9 +92,7 @@ namespace Looplex.DotNet.Samples.WebAPI
 
         private static void RegisterServices(IServiceCollection services)
         {
-            AcademicDependencyContainer.RegisterServices(services);
-
-            RegisterMediatR(services);
+            services.AddAcademicServices();
             
             services.AddCoreServices();
             services.AddClientsServices();
@@ -105,11 +102,6 @@ namespace Looplex.DotNet.Samples.WebAPI
             services.AddScimV2InMemoryServices();
 
             services.AddTransient<IContextFactory, ContextFactory>();
-        }
-
-        private static void RegisterMediatR(IServiceCollection services)
-        {
-            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateStudentCommandHandler).Assembly));
         }
 
         private static void ConfigureLogging(WebApplicationBuilder builder, IConfigurationRoot configuration)
@@ -127,7 +119,6 @@ namespace Looplex.DotNet.Samples.WebAPI
 
         private static void ConfigureTelemetry(WebApplicationBuilder builder)
         {
-
             const string serviceName = "looplex-dotnet-sample";
             builder.Logging.AddOpenTelemetry(options =>
             {

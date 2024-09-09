@@ -5,7 +5,7 @@ using Looplex.DotNet.Core.Domain;
 using Looplex.DotNet.Samples.Academic.Domain.Entities.Students;
 using Looplex.DotNet.Samples.Academic.Domain.Queries;
 
-namespace Looplex.DotNet.Samples.Academic.Infra.Data.Queries
+namespace Looplex.DotNet.Samples.Academic.Infra.Data.QuerieHandlers
 {
     public class GetStudentsQueryHandler(IDatabaseContext context)
         : IQueryHandler<GetStudentsQuery, PaginatedCollection>

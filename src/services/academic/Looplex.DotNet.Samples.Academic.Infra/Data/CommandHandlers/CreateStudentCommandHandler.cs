@@ -3,7 +3,7 @@ using Looplex.DotNet.Core.Application.Abstractions.DataAccess;
 using Looplex.DotNet.Middlewares.ScimV2.Domain.Entities;
 using Looplex.DotNet.Samples.Academic.Domain.Commands;
 
-namespace Looplex.DotNet.Samples.Academic.Infra.Data.Commands
+namespace Looplex.DotNet.Samples.Academic.Infra.Data.CommandHandlers
 {
     public class CreateStudentCommandHandler(IDatabaseContext context) : ICommandHandler<CreateStudentCommand>
     {

@@ -16,9 +16,4 @@
     <ProjectReference Include="..\Looplex.DotNet.Samples.Academic.Domain\Looplex.DotNet.Samples.Academic.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Remove="Services\SchoolSubjectService.cs" />
-    <Compile Remove="Services\RegistrationService.cs" />
-  </ItemGroup>
-
 </Project>

@@ -5,7 +5,7 @@ using Looplex.DotNet.Core.Common.Exceptions;
 using Looplex.DotNet.Samples.Academic.Domain.Commands;
 using Looplex.DotNet.Samples.Academic.Domain.Entities.Students;
 
-namespace Looplex.DotNet.Samples.Academic.Infra.Data.Commands
+namespace Looplex.DotNet.Samples.Academic.Infra.Data.CommandHandlers
 {
     public class UpdateStudentCommandHandler(IDatabaseContext context) : ICommandHandler<UpdateStudentCommand>
     {

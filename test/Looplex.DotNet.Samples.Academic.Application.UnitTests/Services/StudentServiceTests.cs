@@ -27,7 +27,11 @@ public class StudentServiceTests
     [TestInitialize]
     public void Setup()
     {
+        
+        
         _mediator = Substitute.For<IMediator>();
+        
+        
         _studentService = new StudentService(_mediator);
         _context = Substitute.For<IContext>();
         var state = new ExpandoObject();

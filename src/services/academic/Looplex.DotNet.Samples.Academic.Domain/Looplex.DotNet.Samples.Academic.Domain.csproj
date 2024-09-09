@@ -16,19 +16,6 @@
     <None Update="Entities\Schemas\Student.1.0.schema.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Remove="Entities\SchoolSubjects\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="Queries\GetSchoolSubjectsQuery.cs" />
-    <Compile Remove="Queries\GetSchoolSubjectStudentsQuery.cs" />
-    <Compile Remove="Entities\SchoolSubjects\**" />
-    <Compile Remove="Commands\CreateSchoolSubjectCommand.cs" />
-    <Compile Remove="Commands\RegisterStudentToSchoolSubjectCommand.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Remove="Entities\SchoolSubjects\**" />
   </ItemGroup>
 
 </Project>
