@@ -4,21 +4,12 @@ using Looplex.DotNet.Core.Application.Abstractions.DataAccess;
 using Looplex.DotNet.Core.Common.Exceptions;
 using Looplex.DotNet.Samples.Academic.Domain.Commands;
 using Looplex.DotNet.Samples.Academic.Domain.Entities.Students;
+using Looplex.DotNet.Samples.Academic.Infra.Data.Mappers;
 
 namespace Looplex.DotNet.Samples.Academic.Infra.Data.CommandHandlers
 {
     public class UpdateStudentCommandHandler(IDatabaseContext context) : ICommandHandler<UpdateStudentCommand>
     {
-        private static readonly Dictionary<string, string> StudentColumns = new()
-        {
-            { "RegistrationId", "registration_id" },
-        };
-        
-        private static readonly Dictionary<string, string> ProjectsColumns = new()
-        {
-            { "Name", "name" },
-        };
-        
         public async Task Handle(UpdateStudentCommand request, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -29,7 +20,7 @@ namespace Looplex.DotNet.Samples.Academic.Infra.Data.CommandHandlers
 
             await UpdateStudentIfNecessaryAsync(request.Student, connection, transaction);
             
-            // TODO
+            // TODO update projects
             
             await transaction.CommitAsync(cancellationToken);
         }
@@ -44,7 +35,7 @@ namespace Looplex.DotNet.Samples.Academic.Infra.Data.CommandHandlers
                 var sets = new List<string>();
                 foreach (var changedProperty in student.ChangedPropertyNotification.ChangedProperties)
                 {
-                    sets.Add($"{StudentColumns[changedProperty]} = @{changedProperty}");
+                    sets.Add($"{StudentMapper.Maps[changedProperty]} = @{changedProperty}");
                     parameters[$"{changedProperty}"] = studentType.GetProperty(changedProperty)!.GetValue(student)!;
                 }
                 parameters.Add("UniqueId", student.UniqueId!.Value);

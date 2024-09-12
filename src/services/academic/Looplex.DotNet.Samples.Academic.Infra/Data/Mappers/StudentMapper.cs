@@ -21,7 +21,7 @@ internal static class StudentMapper
     {
         _maps = new Dictionary<string, string>();
         _maps.Add(nameof(Student.Id), "id");
-        _maps.Add(nameof(Student.RegistrationId), "registrationid");
-        _maps.Add(nameof(Student.UserId), "userid");
+        _maps.Add(nameof(Student.RegistrationId), "registration_id");
+        _maps.Add(nameof(Student.UserId), "user_id");
     }
 }
