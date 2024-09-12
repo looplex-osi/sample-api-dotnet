@@ -36,13 +36,13 @@ namespace Looplex.DotNet.Samples.Academic.Infra.Data.CommandHandlers
 
         private async Task UpdateStudentIfNecessaryAsync(Student student, IDatabaseConnection connection, DbTransaction transaction)
         {
-            if (student.ChangedProperties.Count > 0)
+            if (student.ChangedPropertyNotification.ChangedProperties.Count > 0)
             {
                 var parameters = new Dictionary<string, object>();
                 var studentType = typeof(Student);
                 var update = "UPDATE students SET ";
                 var sets = new List<string>();
-                foreach (var changedProperty in student.ChangedProperties)
+                foreach (var changedProperty in student.ChangedPropertyNotification.ChangedProperties)
                 {
                     sets.Add($"{StudentColumns[changedProperty]} = @{changedProperty}");
                     parameters[$"{changedProperty}"] = studentType.GetProperty(changedProperty)!.GetValue(student)!;

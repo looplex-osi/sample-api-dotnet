@@ -1,11 +1,10 @@
-﻿using System.Collections.Generic;
-using Looplex.DotNet.Middlewares.ScimV2.Domain.Entities.Abstractions;
+﻿using Looplex.DotNet.Core.Domain.Traits;
+using Newtonsoft.Json;
 
 namespace Looplex.DotNet.Samples.Academic.Domain.Entities.Students;
 
-public partial class Project : ObservableType, IEntity
+public partial class Project
 {
-    public override IList<string> ChangedProperties { get; } = new List<string>();
-    public override IDictionary<string, IList<object>> AddedItems { get; } = new Dictionary<string, IList<object>>();
-    public override IDictionary<string, IList<object>> RemovedItems { get; } = new Dictionary<string, IList<object>>();
+    [JsonIgnore]
+    public IChangedPropertyNotificationTrait ChangedPropertyNotification { get; } = new ChangedPropertyNotificationTrait();
 }

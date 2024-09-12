@@ -192,12 +192,12 @@ public class StudentServiceTests
     {
         Assert.AreEqual("Updated Reg", student.RegistrationId);
         Assert.AreEqual("Project3", student.Projects[0].Name);
-        student.ChangedProperties.Should().BeEquivalentTo(["RegistrationId"]);
-        student.Projects[0].ChangedProperties.Should().BeEquivalentTo(["Name"]);
-        Assert.IsTrue(student.AddedItems.ContainsKey("Projects"));
-        student.AddedItems["Projects"].Should().BeEquivalentTo([new Project() { Name = "ProjectNew" }]);
-        Assert.IsTrue(student.RemovedItems.ContainsKey("Projects"));
-        student.RemovedItems["Projects"].Should().BeEquivalentTo([new Project() { Name = "Project2" }]);
+        student.ChangedPropertyNotification.ChangedProperties.Should().BeEquivalentTo(["RegistrationId"]);
+        student.Projects[0].ChangedPropertyNotification.ChangedProperties.Should().BeEquivalentTo(["Name"]);
+        Assert.IsTrue(student.ChangedPropertyNotification.AddedItems.ContainsKey("Projects"));
+        student.ChangedPropertyNotification.AddedItems["Projects"].Should().BeEquivalentTo([new Project() { Name = "ProjectNew" }]);
+        Assert.IsTrue(student.ChangedPropertyNotification.RemovedItems.ContainsKey("Projects"));
+        student.ChangedPropertyNotification.RemovedItems["Projects"].Should().BeEquivalentTo([new Project() { Name = "Project2" }]);
         return true;
     }
     

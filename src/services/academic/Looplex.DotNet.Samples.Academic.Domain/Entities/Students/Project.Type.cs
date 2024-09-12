@@ -1,38 +1,27 @@
 ﻿using System;
+using Looplex.DotNet.Core.Domain.Entities;
+using Looplex.DotNet.Core.Domain.Traits;
 using Newtonsoft.Json;
 
 namespace Looplex.DotNet.Samples.Academic.Domain.Entities.Students;
 
-public partial class Project
+public partial class Project : IEntity, IHasChangedPropertyNotificationTrait
 {
-    private string? _name;
-    
     /// <summary>
     ///     Sequencial id for an entity.
     /// </summary>
     [JsonIgnore]
-    public int? Id { get; set; }
+    public virtual int? Id { get; set; }
 
     /// <summary>
     ///     A unique identifier for an entity.
     /// </summary>
     [JsonProperty("uuid")]
-    public Guid? UniqueId { get; set; }
+    public virtual Guid? UniqueId { get; set; }
 
     [JsonIgnore]
-    public int? StudentId { get; set; }
+    public virtual int? StudentId { get; set; }
     
     [JsonProperty("name")]
-    public string? Name
-    {
-        get => _name;
-        set
-        {
-            if (value != _name)
-            {
-                _name = value;
-                OnPropertyChanged();
-            }
-        }
-    }
+    public virtual string? Name { get; set; }
 }

@@ -1,3 +1,4 @@
+using Looplex.DotNet.Core.Application.ExtensionMethods;
 using Looplex.DotNet.Core.Common.Exceptions;
 using Looplex.DotNet.Samples.Academic.Domain.Commands;
 using Looplex.DotNet.Samples.Academic.Domain.Entities.Students;
@@ -37,12 +38,12 @@ public class UpdateStudentCommandHandlerTest : IntegrationTestsBase
         };
         
         await createStudentCommandHandler.Handle(createStudentCommand, CancellationToken.None);
-        createStudentCommand.Student.RegistrationId = "updated reg";
         var updateStudentCommand = new UpdateStudentCommand
         {
-            Student = createStudentCommand.Student
+            Student = createStudentCommand.Student.WithObservableProxy()
         };
-        
+        updateStudentCommand.Student.RegistrationId = "updated reg";
+
         // Act
         await updateStudentCommandHandler.Handle(updateStudentCommand, CancellationToken.None);
 
@@ -68,7 +69,7 @@ public class UpdateStudentCommandHandlerTest : IntegrationTestsBase
                 UniqueId = Guid.NewGuid()
             }
         };
-        updateStudentCommand.Student.ChangedProperties.Add("RegistrationId");
+        updateStudentCommand.Student.ChangedPropertyNotification.ChangedProperties.Add("RegistrationId");
 
         // Act
         var action = () => updateStudentCommandHandler.Handle(updateStudentCommand, CancellationToken.None);

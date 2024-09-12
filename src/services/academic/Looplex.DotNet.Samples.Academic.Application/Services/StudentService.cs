@@ -14,7 +14,6 @@ using Looplex.DotNet.Samples.Academic.Domain.Entities.Students;
 using Looplex.OpenForExtension.Abstractions.Commands;
 using Looplex.OpenForExtension.Abstractions.Contexts;
 using Looplex.OpenForExtension.Abstractions.ExtensionMethods;
-using MassTransit.Saga;
 using ScimPatch;
 
 namespace Looplex.DotNet.Samples.Academic.Application.Services
@@ -125,7 +124,9 @@ namespace Looplex.DotNet.Samples.Academic.Application.Services
 
             var json = context.GetRequiredValue<string>("Operations");
             await GetByIdAsync(context, cancellationToken);
-            var student = (Student)context.Roles["Student"];
+            var student = ((Student)context.Roles["Student"])
+                .WithObservableProxy();
+            context.Roles["Student"] = student;
             var operations = OperationTracker.FromJson(student, json);
             context.Plugins.Execute<IHandleInput>(context, cancellationToken);
 
