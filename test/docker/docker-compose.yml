@@ -2,12 +2,12 @@ services:
   sample.api.dotnet.db.test:
     build:
       context: ../..
-    image: mcr.microsoft.com/mssql/server:2017-latest
+    image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: sample-api-dotnet-db-test
     networks:
       - looplex-test
     volumes:
-      - dbdata-test:/var/opt/mssql/data
+      - dbdata-test:/var/opt/mssql
       - ../../src/database/db-migration.sh:/db-migration.sh
       - ../../src/database/db-dump.sql:/db-dump.sql
       - ../../src/database/migrations:/migrations

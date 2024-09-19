@@ -1,6 +1,8 @@
 using Looplex.DotNet.Core.Application.Abstractions.Factories;
 using Looplex.DotNet.Core.WebAPI.ExtensionMethods;
-using Looplex.DotNet.Middlewares.Clients.Domain.Entities.Clients;
+using Looplex.DotNet.Middlewares.ApiKeys.Application.Abstractions.Services;
+using Looplex.DotNet.Middlewares.ApiKeys.Domain.Entities.ApiKeys;
+using Looplex.DotNet.Middlewares.ApiKeys.ExtensionMethods;
 using Looplex.DotNet.Middlewares.OAuth2.ExtensionMethods;
 using Looplex.DotNet.Middlewares.ScimV2.Domain.Entities.Groups;
 using Looplex.DotNet.Middlewares.ScimV2.Domain.Entities.Schemas;
@@ -11,12 +13,10 @@ using Looplex.DotNet.Samples.Academic.Infra.IoC;
 using Looplex.DotNet.Samples.WebAPI.Factories;
 using Looplex.DotNet.Samples.WebAPI.Routes;
 using Looplex.DotNet.Samples.WebAPI.Routes.Academic;
-using Looplex.DotNet.Services.Clients.InMemory.ExtensionMethods;
-using Looplex.DotNet.Services.Clients.InMemory.Services;
 using Looplex.DotNet.Services.ScimV2.InMemory.ExtensionMethods;
-using Looplex.DotNet.Services.ScimV2.InMemory.Services;
 using MassTransit;
-using Looplex.DotNet.Middlewares.Clients.ExtensionMethods;
+using Looplex.DotNet.Middlewares.ScimV2.Application.Abstractions.Services;
+using Looplex.DotNet.Services.ApiKeys.InMemory.ExtensionMethods;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Newtonsoft.Json;
 using OpenTelemetry.Logs;
@@ -40,6 +40,7 @@ namespace Looplex.DotNet.Samples.WebAPI
             
             RegisterServices(builder.Services);
 
+            builder.Services.AddHttpClient();
             builder.Services.AddHealthChecks()
                 .AddCheck<HealthCheck>("Default");
             
@@ -78,9 +79,9 @@ namespace Looplex.DotNet.Samples.WebAPI
             });
             
             app.UseTokenRoute(["AuthorizationService.CreateAccessToken"]);
-            app.UseClientRoutes(options: DefaultScimV2RouteOptions.CreateFor<ClientService>());
-            app.UseUserRoutes(options: DefaultScimV2RouteOptions.CreateFor<UserService>());
-            app.UseGroupRoutes(options: DefaultScimV2RouteOptions.CreateFor<GroupService>());
+            app.UseApiKeyRoutes(options: DefaultScimV2RouteOptions.CreateFor<IApiKeyService>());
+            app.UseUserRoutes(options: DefaultScimV2RouteOptions.CreateFor<IUserService>());
+            app.UseGroupRoutes(options: DefaultScimV2RouteOptions.CreateFor<IGroupService>());
             app.UseStudentRoutes();
             
             AddSchemas();
@@ -95,10 +96,10 @@ namespace Looplex.DotNet.Samples.WebAPI
             services.AddAcademicServices();
             
             services.AddCoreServices();
-            services.AddClientsServices();
+            services.AddApiKeyServices();
             services.AddScimV2Services();
             services.AddOAuth2Services();
-            services.AddClientsInMemoryServices();
+            services.AddApiKeyInMemoryServices();
             services.AddScimV2InMemoryServices();
 
             services.AddTransient<IContextFactory, ContextFactory>();
@@ -142,7 +143,7 @@ namespace Looplex.DotNet.Samples.WebAPI
         {
             Schema.Add<User>(File.ReadAllText("/schemas/User.1.0.schema.json"));
             Schema.Add<Group>(File.ReadAllText("/schemas/Group.1.0.schema.json"));
-            Schema.Add<Client>(File.ReadAllText("/schemas/Client.1.0.schema.json"));
+            Schema.Add<ApiKey>(File.ReadAllText("/schemas/ApiKey.1.0.schema.json"));
             Schema.Add<Student>(File.ReadAllText("/schemas/Student.1.0.schema.json"));
         }
     }

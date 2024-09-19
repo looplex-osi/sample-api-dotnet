@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:ietf:params:scim:schemas:oauth:2.0:Client",
-  "title": "Client",
-  "description": "Client",
+  "title": "ApiKey",
+  "description": "ApiKey",
   "type": "object",
   "properties": {
     "id": {
@@ -19,9 +19,13 @@
     "displayName": {
       "type": "string"
     },
+    "clientId": {
+      "type": "string",
+      "readOnly": true
+    },
     "secret": {
       "type": "string",
-      "writeOnly": true
+      "readOnly": true
     },
     "expirationTime": {
       "type": "string",
@@ -33,9 +37,7 @@
     }
   },
   "required": [
-    "id",
-    "displayName",
-    "secret",
+    "clientName",
     "expirationTime",
     "notBefore"
   ],
