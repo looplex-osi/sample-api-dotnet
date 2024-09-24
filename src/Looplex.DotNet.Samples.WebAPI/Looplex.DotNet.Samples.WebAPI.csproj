@@ -15,9 +15,9 @@
     <PackageReference Include="Looplex.DotNet.Core.Infra" Version="1.1.2" />
     <PackageReference Include="Looplex.DotNet.Core.Middlewares" Version="1.1.2" />
     <PackageReference Include="Looplex.DotNet.Core.WebAPI" Version="1.1.2" />
-    <PackageReference Include="Looplex.DotNet.Middlewares.ApiKeys" Version="1.4.3" />
-    <PackageReference Include="Looplex.DotNet.Services.ApiKeys.InMemory" Version="2.0.1" />
-    <PackageReference Include="Looplex.DotNet.Services.ScimV2.InMemory" Version="2.0.1" />
+    <PackageReference Include="Looplex.DotNet.Middlewares.ApiKeys" Version="1.4.4" />
+    <PackageReference Include="Looplex.DotNet.Services.ApiKeys.InMemory" Version="2.0.2" />
+    <PackageReference Include="Looplex.DotNet.Services.ScimV2.InMemory" Version="2.0.2" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
     <PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.9.0" />
