@@ -24,15 +24,15 @@ namespace Looplex.DotNet.Samples.Academic.Application.Services
         
         public async Task GetAllAsync(IContext context, CancellationToken cancellationToken)
         {
-            context.Plugins.Execute<IHandleInput>(context, cancellationToken);
+            await context.Plugins.ExecuteAsync<IHandleInput>(context, cancellationToken);
 
-            context.Plugins.Execute<IValidateInput>(context, cancellationToken);
+            await context.Plugins.ExecuteAsync<IValidateInput>(context, cancellationToken);
             
-            context.Plugins.Execute<IDefineRoles>(context, cancellationToken);
+            await context.Plugins.ExecuteAsync<IDefineRoles>(context, cancellationToken);
 
-            context.Plugins.Execute<IBind>(context, cancellationToken);
+            await context.Plugins.ExecuteAsync<IBind>(context, cancellationToken);
 
-            context.Plugins.Execute<IBeforeAction>(context, cancellationToken);
+            await context.Plugins.ExecuteAsync<IBeforeAction>(context, cancellationToken);
 
             if (!context.SkipDefaultAction)
             {
@@ -44,9 +44,9 @@ namespace Looplex.DotNet.Samples.Academic.Application.Services
                 context.Result = result.ToJson(Student.Converter.Settings);
             }
 
-            context.Plugins.Execute<IAfterAction>(context, cancellationToken);
+            await context.Plugins.ExecuteAsync<IAfterAction>(context, cancellationToken);
 
-            context.Plugins.Execute<IReleaseUnmanagedResources>(context, cancellationToken);
+            await context.Plugins.ExecuteAsync<IReleaseUnmanagedResources>(context, cancellationToken);
         }
 
         public async Task GetByIdAsync(IContext context, CancellationToken cancellationToken)
@@ -54,7 +54,7 @@ namespace Looplex.DotNet.Samples.Academic.Application.Services
             cancellationToken.ThrowIfCancellationRequested();
             
             var id = Guid.Parse(context.GetRequiredValue<string>("Id"));
-            context.Plugins.Execute<IHandleInput>(context, cancellationToken);
+            await context.Plugins.ExecuteAsync<IHandleInput>(context, cancellationToken);
 
             var getStudentByIdQuery = new GetStudentByIdQuery
             {
@@ -65,43 +65,43 @@ namespace Looplex.DotNet.Samples.Academic.Application.Services
             {
                 throw new EntityNotFoundException(nameof(Student), id.ToString());
             }
-            context.Plugins.Execute<IValidateInput>(context, cancellationToken);
+            await context.Plugins.ExecuteAsync<IValidateInput>(context, cancellationToken);
 
             context.Roles["Student"] = student;
-            context.Plugins.Execute<IDefineRoles>(context, cancellationToken);
+            await context.Plugins.ExecuteAsync<IDefineRoles>(context, cancellationToken);
 
-            context.Plugins.Execute<IBind>(context, cancellationToken);
+            await context.Plugins.ExecuteAsync<IBind>(context, cancellationToken);
 
-            context.Plugins.Execute<IBeforeAction>(context, cancellationToken);
+            await context.Plugins.ExecuteAsync<IBeforeAction>(context, cancellationToken);
 
             if (!context.SkipDefaultAction)
             {
                 context.Result = ((Student)context.Roles["Student"]).ToJson();
             }
 
-            context.Plugins.Execute<IAfterAction>(context, cancellationToken);
+            await context.Plugins.ExecuteAsync<IAfterAction>(context, cancellationToken);
 
-            context.Plugins.Execute<IReleaseUnmanagedResources>(context, cancellationToken);
+            await context.Plugins.ExecuteAsync<IReleaseUnmanagedResources>(context, cancellationToken);
         }
 
         public async Task CreateAsync(IContext context, CancellationToken cancellationToken)
         {
             var json = context.GetRequiredValue<string>("Resource");
             var student = Resource.FromJson<Student>(json, out var messages);
-            context.Plugins.Execute<IHandleInput>(context, cancellationToken);
+            await context.Plugins.ExecuteAsync<IHandleInput>(context, cancellationToken);
 
             if (messages.Count > 0)
             {
                 throw new EntityInvalidException(messages.ToList());
             }
-            context.Plugins.Execute<IValidateInput>(context, cancellationToken);
+            await context.Plugins.ExecuteAsync<IValidateInput>(context, cancellationToken);
             
             context.Roles["Student"] = student;
-            context.Plugins.Execute<IDefineRoles>(context, cancellationToken);
+            await context.Plugins.ExecuteAsync<IDefineRoles>(context, cancellationToken);
 
-            context.Plugins.Execute<IBind>(context, cancellationToken);
+            await context.Plugins.ExecuteAsync<IBind>(context, cancellationToken);
 
-            context.Plugins.Execute<IBeforeAction>(context, cancellationToken);
+            await context.Plugins.ExecuteAsync<IBeforeAction>(context, cancellationToken);
 
             if (!context.SkipDefaultAction)
             {
@@ -113,9 +113,9 @@ namespace Looplex.DotNet.Samples.Academic.Application.Services
                 context.Result = context.Roles["Student"].Id;
             }
 
-            context.Plugins.Execute<IAfterAction>(context, cancellationToken);
+            await context.Plugins.ExecuteAsync<IAfterAction>(context, cancellationToken);
 
-            context.Plugins.Execute<IReleaseUnmanagedResources>(context, cancellationToken);
+            await context.Plugins.ExecuteAsync<IReleaseUnmanagedResources>(context, cancellationToken);
         }
 
         public async Task PatchAsync(IContext context, CancellationToken cancellationToken)
@@ -128,20 +128,20 @@ namespace Looplex.DotNet.Samples.Academic.Application.Services
                 .WithObservableProxy();
             context.Roles["Student"] = student;
             var operations = OperationTracker.FromJson(student, json);
-            context.Plugins.Execute<IHandleInput>(context, cancellationToken);
+            await context.Plugins.ExecuteAsync<IHandleInput>(context, cancellationToken);
 
             if (operations.Count == 0)
             {
                 throw new InvalidOperationException("List of operations can't be empty.");
             }
-            context.Plugins.Execute<IValidateInput>(context, cancellationToken);
+            await context.Plugins.ExecuteAsync<IValidateInput>(context, cancellationToken);
 
             context.Roles["Operations"] = operations;
-            context.Plugins.Execute<IDefineRoles>(context, cancellationToken);
+            await context.Plugins.ExecuteAsync<IDefineRoles>(context, cancellationToken);
 
-            context.Plugins.Execute<IBind>(context, cancellationToken);
+            await context.Plugins.ExecuteAsync<IBind>(context, cancellationToken);
 
-            context.Plugins.Execute<IBeforeAction>(context, cancellationToken);
+            await context.Plugins.ExecuteAsync<IBeforeAction>(context, cancellationToken);
 
             if (!context.SkipDefaultAction)
             {
@@ -165,9 +165,9 @@ namespace Looplex.DotNet.Samples.Academic.Application.Services
                 await _mediator.Send(command, cancellationToken);
             }
 
-            context.Plugins.Execute<IAfterAction>(context, cancellationToken);
+            await context.Plugins.ExecuteAsync<IAfterAction>(context, cancellationToken);
 
-            context.Plugins.Execute<IReleaseUnmanagedResources>(context, cancellationToken);
+            await context.Plugins.ExecuteAsync<IReleaseUnmanagedResources>(context, cancellationToken);
         }
 
         public async Task DeleteAsync(IContext context, CancellationToken cancellationToken)
@@ -175,7 +175,7 @@ namespace Looplex.DotNet.Samples.Academic.Application.Services
             cancellationToken.ThrowIfCancellationRequested();
             
             var id = Guid.Parse(context.GetRequiredValue<string>("Id"));
-            context.Plugins.Execute<IHandleInput>(context, cancellationToken);
+            await context.Plugins.ExecuteAsync<IHandleInput>(context, cancellationToken);
 
             await GetByIdAsync(context, cancellationToken);
             var student = (Student)context.Roles["Student"];
@@ -183,13 +183,13 @@ namespace Looplex.DotNet.Samples.Academic.Application.Services
             {
                 throw new EntityNotFoundException(nameof(Student), id.ToString());
             }
-            context.Plugins.Execute<IValidateInput>(context, cancellationToken);
+            await context.Plugins.ExecuteAsync<IValidateInput>(context, cancellationToken);
 
-            context.Plugins.Execute<IDefineRoles>(context, cancellationToken);
+            await context.Plugins.ExecuteAsync<IDefineRoles>(context, cancellationToken);
 
-            context.Plugins.Execute<IBind>(context, cancellationToken);
+            await context.Plugins.ExecuteAsync<IBind>(context, cancellationToken);
 
-            context.Plugins.Execute<IBeforeAction>(context, cancellationToken);
+            await context.Plugins.ExecuteAsync<IBeforeAction>(context, cancellationToken);
 
             if (!context.SkipDefaultAction)
             {
@@ -200,9 +200,9 @@ namespace Looplex.DotNet.Samples.Academic.Application.Services
                 await _mediator.Send(command, cancellationToken);
             }
 
-            context.Plugins.Execute<IAfterAction>(context, cancellationToken);
+            await context.Plugins.ExecuteAsync<IAfterAction>(context, cancellationToken);
 
-            context.Plugins.Execute<IReleaseUnmanagedResources>(context, cancellationToken);
+            await context.Plugins.ExecuteAsync<IReleaseUnmanagedResources>(context, cancellationToken);
         }
     }
 }
