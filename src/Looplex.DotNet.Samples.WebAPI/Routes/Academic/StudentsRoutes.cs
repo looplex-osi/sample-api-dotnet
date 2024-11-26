@@ -1,16 +1,19 @@
-using Looplex.DotNet.Samples.Academic.Application.Abstractions.Services;
 using Looplex.DotNet.Middlewares.ScimV2.ExtensionMethods;
+using Looplex.DotNet.Samples.Academic.Application.Abstractions.Services;
 using Looplex.DotNet.Samples.Academic.Application.Services;
+using Looplex.DotNet.Samples.Academic.Domain.Entities.Students;
 
 namespace Looplex.DotNet.Samples.WebAPI.Routes.Academic
 {
     public static class StudentsRoutes
     {
-        public static void UseStudentRoutes(this IEndpointRouteBuilder app)
+        public static Task UseStudentRoutesAsync(this IEndpointRouteBuilder app, CancellationToken cancellationToken)
         {
-            app.UseScimV2Routes<IStudentService>(
+            return app.UseScimV2RoutesAsync<Student, IStudentService>(
                 "students",
-                DefaultScimV2RouteOptions.CreateFor<StudentService>());
+                "", // TODO
+                DefaultScimV2RouteOptions.CreateFor<StudentService>(),
+                cancellationToken);
         }
     }
 }

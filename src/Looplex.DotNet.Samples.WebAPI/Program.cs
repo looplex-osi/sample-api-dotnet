@@ -1,28 +1,25 @@
 using Looplex.DotNet.Core.Application.Abstractions.Factories;
 using Looplex.DotNet.Core.WebAPI.ExtensionMethods;
-using Looplex.DotNet.Middlewares.ApiKeys.Application.Abstractions.Services;
-using Looplex.DotNet.Middlewares.ApiKeys.Domain.Entities.ApiKeys;
 using Looplex.DotNet.Middlewares.ApiKeys.ExtensionMethods;
 using Looplex.DotNet.Middlewares.OAuth2.ExtensionMethods;
-using Looplex.DotNet.Middlewares.ScimV2.Domain.Entities.Groups;
-using Looplex.DotNet.Middlewares.ScimV2.Domain.Entities.Schemas;
-using Looplex.DotNet.Middlewares.ScimV2.Domain.Entities.Users;
 using Looplex.DotNet.Middlewares.ScimV2.ExtensionMethods;
-using Looplex.DotNet.Samples.Academic.Domain.Entities.Students;
 using Looplex.DotNet.Samples.Academic.Infra.IoC;
+using Looplex.DotNet.Samples.WebAPI.Caching;
 using Looplex.DotNet.Samples.WebAPI.Factories;
-using Looplex.DotNet.Samples.WebAPI.Routes;
 using Looplex.DotNet.Samples.WebAPI.Routes.Academic;
 using Looplex.DotNet.Services.ScimV2.InMemory.ExtensionMethods;
 using MassTransit;
-using Looplex.DotNet.Middlewares.ScimV2.Application.Abstractions.Services;
 using Looplex.DotNet.Services.ApiKeys.InMemory.ExtensionMethods;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using Polly;
+using Polly.Extensions.Http;
+using RestSharp;
 using Serilog;
 
 namespace Looplex.DotNet.Samples.WebAPI
@@ -37,12 +34,14 @@ namespace Looplex.DotNet.Samples.WebAPI
                 .Build();
 
             var builder = WebApplication.CreateBuilder(args);
-            
-            RegisterServices(builder.Services);
 
-            builder.Services.AddHttpClient();
+            builder.Services.AddHttpClient("Default")
+                .AddPolicyHandler(GetRetryPolicy());
             builder.Services.AddHealthChecks()
                 .AddCheck<HealthCheck>("Default");
+            builder.Services.AddMemoryCache();
+            
+            RegisterServices(builder.Services);
             
             ConfigureLogging(builder, configuration);
             ConfigureResponseCache(builder);
@@ -77,14 +76,20 @@ namespace Looplex.DotNet.Samples.WebAPI
                     await context.Response.WriteAsync(result);
                 }
             });
-            
+
+            var schemaIdApiKey = configuration["JsonSchemaIdForClientCredential"]!;
+            var schemaIdUser = configuration["JsonSchemaIdForUser"]!;
+            var schemaIdGroup = configuration["JsonSchemaIdForGroup"]!;
+
             app.UseTokenRoute(["AuthorizationService.CreateAccessToken"]);
-            app.UseApiKeyRoutes(options: DefaultScimV2RouteOptions.CreateFor<IApiKeyService>());
-            app.UseUserRoutes(options: DefaultScimV2RouteOptions.CreateFor<IUserService>());
-            app.UseGroupRoutes(options: DefaultScimV2RouteOptions.CreateFor<IGroupService>());
-            app.UseStudentRoutes();
-            
-            AddSchemas();
+            app.UseSchemaRoute([]);
+            app.UseResourceTypeRoute([]);
+            app.UseServiceProviderConfigurationRoute([]);
+            app.UseBulkRoute([]);
+            app.UseApiKeyRoutesAsync(schemaIdApiKey).GetAwaiter().GetResult();
+            app.UseUserRoutesAsync(schemaIdUser).GetAwaiter().GetResult();
+            app.UseGroupRoutesAsync(schemaIdGroup).GetAwaiter().GetResult();
+            app.UseStudentRoutesAsync(CancellationToken.None).GetAwaiter().GetResult();
 
             app.UseHttpsRedirection();
 
@@ -93,6 +98,29 @@ namespace Looplex.DotNet.Samples.WebAPI
 
         private static void RegisterServices(IServiceCollection services)
         {
+            services.AddSingleton<ICacheServiceFactory>(sp =>
+            {
+                var factory = new CacheServiceFactory();
+                factory.RegisterCacheService("InMemory", new MemoryCacheService(sp.GetRequiredService<IMemoryCache>()));
+                return factory;
+            });
+            services.AddTransient<IRestClient>(sp =>
+            {
+                var options = new RestClientOptions
+                {
+                    ThrowOnAnyError = true
+                };
+                return new RestClient(options);
+            });
+            services.AddTransient(sp =>
+            {
+                var httpClient = sp.GetRequiredService<IHttpClientFactory>().CreateClient("Default");
+                return new RestClient(httpClient, new RestClientOptions
+                {
+                    ConfigureMessageHandler = _ => new HttpClientHandler() // Optionally customize HttpClientHandler
+                });
+            });
+            
             services.AddAcademicServices();
             
             services.AddCoreServices();
@@ -138,13 +166,12 @@ namespace Looplex.DotNet.Samples.WebAPI
                       .AddAspNetCoreInstrumentation()
                       .AddConsoleExporter());
         }
-
-        private static void AddSchemas()
+    
+        static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
         {
-            Schema.Add<User>(File.ReadAllText("/schemas/User.1.0.schema.json"));
-            Schema.Add<Group>(File.ReadAllText("/schemas/Group.1.0.schema.json"));
-            Schema.Add<ApiKey>(File.ReadAllText("/schemas/ApiKey.1.0.schema.json"));
-            Schema.Add<Student>(File.ReadAllText("/schemas/Student.1.0.schema.json"));
+            return HttpPolicyExtensions
+                .HandleTransientHttpError() // Handle transient errors (5xx, 408, etc.)
+                .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))); // Retry 3 times with exponential backoff
         }
     }
 }

@@ -2,8 +2,8 @@ using System.Collections.ObjectModel;
 using System.Dynamic;
 using FluentAssertions;
 using Looplex.DotNet.Core.Common.Exceptions;
-using Looplex.DotNet.Core.Domain;
-using Looplex.DotNet.Middlewares.ScimV2.Domain.Entities.Schemas;
+using Looplex.DotNet.Middlewares.ScimV2.Domain.Entities;
+using Looplex.DotNet.Middlewares.ScimV2.Domain.Entities.Messages;
 using Looplex.DotNet.Samples.Academic.Application.Abstractions.Services;
 using Looplex.DotNet.Samples.Academic.Application.Services;
 using Looplex.DotNet.Samples.Academic.Domain.Commands;
@@ -27,11 +27,7 @@ public class StudentServiceTests
     [TestInitialize]
     public void Setup()
     {
-        
-        
         _mediator = Substitute.For<IMediator>();
-        
-        
         _studentService = new StudentService(_mediator);
         _context = Substitute.For<IContext>();
         var state = new ExpandoObject();
@@ -39,8 +35,8 @@ public class StudentServiceTests
         var roles = new Dictionary<string, dynamic>();
         _context.Roles.Returns(roles);
         _cancellationToken = new CancellationToken();
-        if (!Schema.Schemas.ContainsKey(typeof(Student)))
-            Schema.Add<Student>(File.ReadAllText("Entities/Schemas/Student.1.0.schema.json"));
+        if (!Schemas.ContainsKey(typeof(Student)))
+            Schemas.Add(typeof(Student), File.ReadAllText("Entities/Schemas/Student.1.0.schema.json"));
     }
     
     [TestMethod]
@@ -48,29 +44,29 @@ public class StudentServiceTests
     {
         // Arrange
         _context.State.Pagination = new ExpandoObject();
-        _context.State.Pagination.Page = 1;
-        _context.State.Pagination.PerPage = 10;
+        _context.State.Pagination.StartIndex = 1;
+        _context.State.Pagination.ItemsPerPage = 10;
         var existingStudent = new Student
         {
             Id = null,
             UniqueId = Guid.NewGuid()
         };
         _mediator.Send(Arg.Any<GetStudentsQuery>(), Arg.Any<CancellationToken>())
-            .Returns(new PaginatedCollection()
+            .Returns(new ListResponse()
             {
-                Page = 1,
-                PerPage = 10,
-                Records = [existingStudent],
-                TotalCount = 1,
+                StartIndex = 1,
+                ItemsPerPage = 10,
+                Resources = [existingStudent],
+                TotalResults = 1,
             });
             
         // Act
         await _studentService.GetAllAsync(_context, _cancellationToken);
 
         // Assert
-        var result = JsonConvert.DeserializeObject<PaginatedCollection>((string)_context.Result!)!;
-        Assert.AreEqual(1, result.TotalCount);
-        JsonConvert.DeserializeObject<Student>(result.Records[0].ToString()!).Should().BeEquivalentTo(existingStudent);
+        var result = JsonConvert.DeserializeObject<ListResponse>((string)_context.Result!)!;
+        Assert.AreEqual(1, result.TotalResults);
+        JsonConvert.DeserializeObject<Student>(result.Resources[0].ToString()!).Should().BeEquivalentTo(existingStudent);
     }
 
     [TestMethod]

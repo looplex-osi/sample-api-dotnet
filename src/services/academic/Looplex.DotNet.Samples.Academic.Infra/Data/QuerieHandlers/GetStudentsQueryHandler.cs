@@ -1,21 +1,21 @@
 ﻿using Looplex.DotNet.Core.Application.Abstractions.DataAccess;
 using Looplex.DotNet.Core.Application.Abstractions.Queries;
-using Looplex.DotNet.Core.Common.Utils;
-using Looplex.DotNet.Core.Domain;
+using Looplex.DotNet.Core.Application.ExtensionMethods;
+using Looplex.DotNet.Middlewares.ScimV2.Domain.Entities.Messages;
 using Looplex.DotNet.Samples.Academic.Domain.Entities.Students;
 using Looplex.DotNet.Samples.Academic.Domain.Queries;
 
 namespace Looplex.DotNet.Samples.Academic.Infra.Data.QuerieHandlers
 {
     public class GetStudentsQueryHandler(IDatabaseContext context)
-        : IQueryHandler<GetStudentsQuery, PaginatedCollection>
+        : IQueryHandler<GetStudentsQuery, ListResponse>
     {
-        public async Task<PaginatedCollection> Handle(GetStudentsQuery request, CancellationToken cancellationToken)
+        public async Task<ListResponse> Handle(GetStudentsQuery request, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var page = (int)request.Context.State.Pagination.Page;
-            var perPage = (int)request.Context.State.Pagination.PerPage;
+            var startIndex = request.Context.GetRequiredValue<int>("Pagination.StartIndex");
+            var itemsPerPage = request.Context.GetRequiredValue<int>("Pagination.ItemsPerPage");
             
             var select = "id, uuid, registration_id, user_id, created_at, updated_at";
             var where = "";
@@ -38,7 +38,7 @@ namespace Looplex.DotNet.Samples.Academic.Infra.Data.QuerieHandlers
                     FETCH NEXT @perPage ROWS ONLY";
 
             var students = (await connection
-                .QueryAsync<dynamic>(query, new { offset = PaginationUtils.GetOffset(perPage, page), perPage }))
+                .QueryAsync<dynamic>(query, new { offset = startIndex, itemsPerPage }))
                 .Select(r => new Student
                 {
                     Id = r.id,
@@ -75,12 +75,12 @@ namespace Looplex.DotNet.Samples.Academic.Infra.Data.QuerieHandlers
             }
             
             request.Context.State.Pagination.TotalCount = count;
-            return new PaginatedCollection
+            return new ListResponse
             {
-                Page = page,
-                PerPage = perPage,
-                TotalCount = count,
-                Records = students.Select(r => (object)r).ToList(),
+                Resources = students.Select(r => (object)r).ToList(),
+                StartIndex = startIndex,
+                ItemsPerPage = itemsPerPage,
+                TotalResults = count,
             };
         }
     }

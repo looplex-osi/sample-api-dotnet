@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Threading;
-using Looplex.DotNet.Core.Domain;
 using Looplex.DotNet.Samples.Academic.Application.Abstractions.Services;
 using Looplex.DotNet.Samples.Academic.Domain.Commands;
 using Looplex.DotNet.Samples.Academic.Domain.Queries;
@@ -14,6 +13,7 @@ using Looplex.DotNet.Samples.Academic.Domain.Entities.Students;
 using Looplex.OpenForExtension.Abstractions.Commands;
 using Looplex.OpenForExtension.Abstractions.Contexts;
 using Looplex.OpenForExtension.Abstractions.ExtensionMethods;
+using Newtonsoft.Json;
 using ScimPatch;
 
 namespace Looplex.DotNet.Samples.Academic.Application.Services
@@ -41,7 +41,7 @@ namespace Looplex.DotNet.Samples.Academic.Application.Services
                     Context = context,
                 };
                 var result = await _mediator.Send(getStudentsQuery, cancellationToken);
-                context.Result = result.ToJson(Student.Converter.Settings);
+                context.Result = JsonConvert.SerializeObject(result, Student.Converter.Settings);
             }
 
             await context.Plugins.ExecuteAsync<IAfterAction>(context, cancellationToken);
@@ -116,6 +116,11 @@ namespace Looplex.DotNet.Samples.Academic.Application.Services
             await context.Plugins.ExecuteAsync<IAfterAction>(context, cancellationToken);
 
             await context.Plugins.ExecuteAsync<IReleaseUnmanagedResources>(context, cancellationToken);
+        }
+
+        public Task UpdateAsync(IContext context, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task PatchAsync(IContext context, CancellationToken cancellationToken)

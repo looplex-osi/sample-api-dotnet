@@ -94,17 +94,17 @@ public class GetStudentsQueryHandlerTests : IntegrationTestsBase
         var students = await getStudentsQueryHandler.Handle(getStudentsQuery, CancellationToken.None);
 
         // Assert
-        Assert.AreEqual(count, students.TotalCount);
-        Assert.AreEqual(1, students.Page);
-        Assert.AreEqual(2, students.PerPage);
-        Assert.IsTrue(students.Records.Count() >= 0);
-        Assert.IsTrue(students.Records.Count() <= 2);
+        Assert.AreEqual(count, students.TotalResults);
+        Assert.AreEqual(1, students.StartIndex);
+        Assert.AreEqual(2, students.ItemsPerPage);
+        Assert.IsTrue(students.Resources.Count() >= 0);
+        Assert.IsTrue(students.Resources.Count() <= 2);
         
-        Assert.AreEqual("test3", ((Student)students.Records[0]).RegistrationId);
-        Assert.AreEqual("Project6", ((Student)students.Records[0]).Projects[0].Name);
-        Assert.AreEqual("Project5", ((Student)students.Records[0]).Projects[1].Name);
-        Assert.AreEqual("test2", ((Student)students.Records[1]).RegistrationId);
-        Assert.AreEqual("Project4", ((Student)students.Records[1]).Projects[0].Name);
-        Assert.AreEqual("Project3", ((Student)students.Records[1]).Projects[1].Name);
+        Assert.AreEqual("test3", ((Student)students.Resources[0]).RegistrationId);
+        Assert.AreEqual("Project6", ((Student)students.Resources[0]).Projects[0].Name);
+        Assert.AreEqual("Project5", ((Student)students.Resources[0]).Projects[1].Name);
+        Assert.AreEqual("test2", ((Student)students.Resources[1]).RegistrationId);
+        Assert.AreEqual("Project4", ((Student)students.Resources[1]).Projects[0].Name);
+        Assert.AreEqual("Project3", ((Student)students.Resources[1]).Projects[1].Name);
     }
 }
