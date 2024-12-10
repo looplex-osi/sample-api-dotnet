@@ -1,26 +1,24 @@
 ﻿using Looplex.DotNet.Core.Application.Abstractions.Commands;
-using Looplex.DotNet.Core.Application.Abstractions.DataAccess;
 using Looplex.DotNet.Middlewares.ScimV2.Domain.Entities;
 using Looplex.DotNet.Samples.Academic.Domain.Commands;
 
 namespace Looplex.DotNet.Samples.Academic.Infra.Data.CommandHandlers
 {
-    public class CreateStudentCommandHandler(IDatabaseContext context) : ICommandHandler<CreateStudentCommand>
+    public class CreateStudentCommandHandler() : ICommandHandler<CreateStudentCommand>
     {
         public async Task Handle(CreateStudentCommand request, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-
             var query = @"
                 insert into students (external_id, registration_id, user_id) 
                 output inserted.id, inserted.uuid, inserted.created_at
                 values (@ExternalId, @RegistrationId, @UserId)";
 
-            using var connection = context.CreateConnection();
-            connection.Open();
-            await using var transaction = connection.BeginTransaction();
+            using var dbService = await request.Context.GetSqlDatabaseService();
+            dbService.OpenConnection();
+            await using var transaction = dbService.BeginTransaction();
             
-            var (id, uniqueId, createdAt) = await connection.QueryFirstOrDefaultAsync<(int, Guid, DateTimeOffset)>(
+            var (id, uniqueId, createdAt) = await dbService.QueryFirstOrDefaultAsync<(int, Guid, DateTimeOffset)>(
                 query,
                 new
                 {
@@ -43,7 +41,7 @@ namespace Looplex.DotNet.Samples.Academic.Infra.Data.CommandHandlers
                     output inserted.id, inserted.uuid
                     values (@StudentId, @Name)";
                 
-                var ids = await connection.QueryFirstOrDefaultAsync<(int, Guid)>(
+                var ids = await dbService.QueryFirstOrDefaultAsync<(int, Guid)>(
                     query,
                     new { StudentId = id , project.Name },
                     transaction);

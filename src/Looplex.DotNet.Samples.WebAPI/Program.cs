@@ -1,17 +1,18 @@
 using Looplex.DotNet.Core.Application.Abstractions.Factories;
-using Looplex.DotNet.Core.WebAPI.ExtensionMethods;
+using Looplex.DotNet.Core.Application.Abstractions.Services;
 using Looplex.DotNet.Middlewares.ApiKeys.ExtensionMethods;
 using Looplex.DotNet.Middlewares.OAuth2.ExtensionMethods;
 using Looplex.DotNet.Middlewares.ScimV2.ExtensionMethods;
 using Looplex.DotNet.Samples.Academic.Infra.IoC;
-using Looplex.DotNet.Samples.WebAPI.Caching;
 using Looplex.DotNet.Samples.WebAPI.Factories;
 using Looplex.DotNet.Samples.WebAPI.Routes.Academic;
+using Looplex.DotNet.Samples.WebAPI.Services;
 using Looplex.DotNet.Services.ScimV2.InMemory.ExtensionMethods;
 using MassTransit;
 using Looplex.DotNet.Services.ApiKeys.InMemory.ExtensionMethods;
+using Looplex.DotNet.Services.Redis.ExtensionMethods;
+using Looplex.DotNet.Services.SqlDatabases.ExtensionMethods;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
@@ -21,6 +22,7 @@ using Polly;
 using Polly.Extensions.Http;
 using RestSharp;
 using Serilog;
+using StackExchange.Redis;
 
 namespace Looplex.DotNet.Samples.WebAPI
 {
@@ -35,13 +37,16 @@ namespace Looplex.DotNet.Samples.WebAPI
 
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Services.AddHttpContextAccessor();
             builder.Services.AddHttpClient("Default")
                 .AddPolicyHandler(GetRetryPolicy());
             builder.Services.AddHealthChecks()
                 .AddCheck<HealthCheck>("Default");
+            builder.Services.AddRedisHealthChecks();
+            builder.Services.AddSqlDatabaseHealthChecks();
             builder.Services.AddMemoryCache();
             
-            RegisterServices(builder.Services);
+            RegisterServices(builder.Services, configuration);
             
             ConfigureLogging(builder, configuration);
             ConfigureResponseCache(builder);
@@ -53,7 +58,7 @@ namespace Looplex.DotNet.Samples.WebAPI
 
                 // config.AddConsumers(typeof(UserDeletedConsumer).Assembly);
             });
-
+            
             var app = builder.Build();
             
             app.MapHealthChecks("/health", new HealthCheckOptions
@@ -96,14 +101,8 @@ namespace Looplex.DotNet.Samples.WebAPI
             app.Run();
         }
 
-        private static void RegisterServices(IServiceCollection services)
+        private static void RegisterServices(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddSingleton<ICacheServiceFactory>(sp =>
-            {
-                var factory = new CacheServiceFactory();
-                factory.RegisterCacheService("InMemory", new MemoryCacheService(sp.GetRequiredService<IMemoryCache>()));
-                return factory;
-            });
             services.AddTransient<IRestClient>(sp =>
             {
                 var options = new RestClientOptions
@@ -120,10 +119,12 @@ namespace Looplex.DotNet.Samples.WebAPI
                     ConfigureMessageHandler = _ => new HttpClientHandler() // Optionally customize HttpClientHandler
                 });
             });
+            services.AddSingleton<ISecretsService, InMemorySecretsService>();
+            var redisConnectionString = configuration["RedisConnectionString"]!;
+            services.AddRedisServices(redisConnectionString);
+            services.AddSqlDatabaseServices();
             
             services.AddAcademicServices();
-            
-            services.AddCoreServices();
             services.AddApiKeyServices();
             services.AddScimV2Services();
             services.AddOAuth2Services();

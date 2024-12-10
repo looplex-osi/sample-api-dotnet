@@ -1,12 +1,11 @@
-﻿using Looplex.DotNet.Core.Application.Abstractions.DataAccess;
-using Looplex.DotNet.Core.Application.Abstractions.Queries;
+﻿using Looplex.DotNet.Core.Application.Abstractions.Queries;
 using Looplex.DotNet.Core.Common.Exceptions;
 using Looplex.DotNet.Samples.Academic.Domain.Entities.Students;
 using Looplex.DotNet.Samples.Academic.Domain.Queries;
 
 namespace Looplex.DotNet.Samples.Academic.Infra.Data.QuerieHandlers
 {
-    public class GetStudentByIdQueryHandler(IDatabaseContext context) : IQueryHandler<GetStudentByIdQuery, Student>
+    public class GetStudentByIdQueryHandler() : IQueryHandler<GetStudentByIdQuery, Student>
     {
         public async Task<Student> Handle(GetStudentByIdQuery request, CancellationToken cancellationToken)
         {
@@ -20,9 +19,9 @@ namespace Looplex.DotNet.Samples.Academic.Infra.Data.QuerieHandlers
                 WHERE {where}
                 ";
 
-            using var connection = context.CreateConnection();
+            using var dbService = await request.Context.GetSqlDatabaseService();
 
-            var record = await connection.QueryFirstOrDefaultAsync<dynamic>(query, new { Id = request.UniqueId });
+            var record = await dbService.QueryFirstOrDefaultAsync<dynamic>(query, new { Id = request.UniqueId });
             if (record == null)
                 throw new EntityNotFoundException(nameof(Student), request.UniqueId.ToString());
 
@@ -44,7 +43,7 @@ namespace Looplex.DotNet.Samples.Academic.Infra.Data.QuerieHandlers
                 SELECT {select} FROM projects
                 WHERE {where}
                 ";
-            var records = await connection.QueryAsync<Project>(query, new { Id = student.Id });
+            var records = await dbService.QueryAsync<Project>(query, new { Id = student.Id });
             
             student.Projects = records.ToList();
             return student;

@@ -1,6 +1,6 @@
 ﻿using System.Data.Common;
 using Looplex.DotNet.Core.Application.Abstractions.Commands;
-using Looplex.DotNet.Core.Application.Abstractions.DataAccess;
+using Looplex.DotNet.Core.Application.Abstractions.Services;
 using Looplex.DotNet.Core.Common.Exceptions;
 using Looplex.DotNet.Samples.Academic.Domain.Commands;
 using Looplex.DotNet.Samples.Academic.Domain.Entities.Students;
@@ -8,24 +8,24 @@ using Looplex.DotNet.Samples.Academic.Infra.Data.Mappers;
 
 namespace Looplex.DotNet.Samples.Academic.Infra.Data.CommandHandlers
 {
-    public class UpdateStudentCommandHandler(IDatabaseContext context) : ICommandHandler<UpdateStudentCommand>
+    public class UpdateStudentCommandHandler() : ICommandHandler<UpdateStudentCommand>
     {
         public async Task Handle(UpdateStudentCommand request, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            using var connection = context.CreateConnection();
-            connection.Open();
-            await using var transaction = connection.BeginTransaction();
+            using var dbService = await request.Context.GetSqlDatabaseService();
+            dbService.OpenConnection();
+            await using var transaction = dbService.BeginTransaction();
 
-            await UpdateStudentIfNecessaryAsync(request.Student, connection, transaction);
+            await UpdateStudentIfNecessaryAsync(request.Student, dbService, transaction);
             
             // TODO update projects
             
             await transaction.CommitAsync(cancellationToken);
         }
 
-        private async Task UpdateStudentIfNecessaryAsync(Student student, IDatabaseConnection connection, DbTransaction transaction)
+        private async Task UpdateStudentIfNecessaryAsync(Student student, ISqlDatabaseService sqlDatabaseService, DbTransaction transaction)
         {
             if (student.ChangedPropertyNotification.ChangedProperties.Count > 0)
             {
@@ -47,7 +47,7 @@ namespace Looplex.DotNet.Samples.Academic.Infra.Data.CommandHandlers
                     {where}
                 ";
 
-                var count = await connection.ExecuteAsync(query, parameters, transaction);
+                var count = await sqlDatabaseService.ExecuteAsync(query, parameters, transaction);
                 if (count == 0) throw new EntityNotFoundException(nameof(Student), student.UniqueId!.Value.ToString());
             }
         }

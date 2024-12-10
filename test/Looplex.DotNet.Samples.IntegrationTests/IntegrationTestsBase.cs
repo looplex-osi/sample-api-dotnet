@@ -1,34 +1,23 @@
-using Looplex.DotNet.Core.Application.Abstractions.DataAccess;
-using Looplex.DotNet.Core.Infra.Data;
-using Microsoft.Extensions.Configuration;
+using Looplex.DotNet.Core.Application.Abstractions.Services;
+using Looplex.DotNet.Services.SqlDatabases;
+using Microsoft.Data.SqlClient;
 
-namespace Looplex.DotNet.Samples.WebAPI.IntegrationTests;
+namespace Looplex.DotNet.Samples.IntegrationTests;
 
 public abstract class IntegrationTestsBase
 {
-    protected readonly IConfiguration Configuration 
-        = new ConfigurationBuilder()
-            .AddInMemoryCollection(new Dictionary<string, string?>
-            {
-                { "DbServer", "localhost" },
-                { "DbPort", "1434" },
-                { "DbUser", "samplesUser" },
-                { "Password", "!ooplex_D0tNet!" },
-                { "Database", "dotnetsamples" }
-            })
-            .Build();
-
-
-    private IDatabaseContext? _databaseContext;
-    protected IDatabaseContext DatabaseContext
+    private ISqlDatabaseService? _sqlDatabaseService;
+    protected ISqlDatabaseService SqlDatabaseService
     {
         get 
         {
-            if (_databaseContext ==  null)
+            if (_sqlDatabaseService ==  null)
             {
-                _databaseContext = new DatabaseContext(Configuration);
+                var connectionString = "Server=localhost,1434;Database=dotnetsamples;User Id=samplesUser;Password=!ooplex_D0tNet!;";
+                var connection = new SqlConnection(connectionString);
+                _sqlDatabaseService = new SqlDatabaseService(connection);
             }
-            return _databaseContext;
+            return _sqlDatabaseService;
         }
     }
 }

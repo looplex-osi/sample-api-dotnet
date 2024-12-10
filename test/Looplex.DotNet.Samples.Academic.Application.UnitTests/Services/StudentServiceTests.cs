@@ -2,15 +2,16 @@ using System.Collections.ObjectModel;
 using System.Dynamic;
 using FluentAssertions;
 using Looplex.DotNet.Core.Common.Exceptions;
-using Looplex.DotNet.Middlewares.ScimV2.Domain.Entities;
+using Looplex.DotNet.Middlewares.ScimV2.Application.Abstractions.Providers;
+using Looplex.DotNet.Middlewares.ScimV2.Domain;
 using Looplex.DotNet.Middlewares.ScimV2.Domain.Entities.Messages;
 using Looplex.DotNet.Samples.Academic.Application.Abstractions.Services;
 using Looplex.DotNet.Samples.Academic.Application.Services;
 using Looplex.DotNet.Samples.Academic.Domain.Commands;
 using Looplex.DotNet.Samples.Academic.Domain.Entities.Students;
 using Looplex.DotNet.Samples.Academic.Domain.Queries;
-using Looplex.OpenForExtension.Abstractions.Contexts;
 using MediatR;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using NSubstitute;
 
@@ -21,22 +22,24 @@ public class StudentServiceTests
 {
     private IMediator _mediator = null!;
     private IStudentService _studentService = null!;
-    private IContext _context = null!;
+    private IConfiguration _configuration = null!;
+    private IJsonSchemaProvider _jsonSchemaProvider = null!;
+    private IScimV2Context _context = null!;
     private CancellationToken _cancellationToken;
 
     [TestInitialize]
     public void Setup()
     {
+        _configuration = Substitute.For<IConfiguration>();
+        _jsonSchemaProvider = Substitute.For<IJsonSchemaProvider>();
         _mediator = Substitute.For<IMediator>();
-        _studentService = new StudentService(_mediator);
-        _context = Substitute.For<IContext>();
+        _studentService = new StudentService(_mediator, _configuration, _jsonSchemaProvider);
+        _context = Substitute.For<IScimV2Context>();
         var state = new ExpandoObject();
         _context.State.Returns(state);
         var roles = new Dictionary<string, dynamic>();
         _context.Roles.Returns(roles);
         _cancellationToken = new CancellationToken();
-        if (!Schemas.ContainsKey(typeof(Student)))
-            Schemas.Add(typeof(Student), File.ReadAllText("Entities/Schemas/Student.1.0.schema.json"));
     }
     
     [TestMethod]
@@ -73,8 +76,11 @@ public class StudentServiceTests
     public async Task GetByIdAsync_ShouldThrowEntityNotFoundException_WhenStudentDoesNotExist()
     {
         // Arrange
-        _context.State.Id = Guid.NewGuid().ToString();
-
+        _context.RouteValues = new Dictionary<string, object?>
+        {
+            { "StudentId", Guid.NewGuid().ToString() }
+        };
+        
         // Act & Assert
         await Assert.ThrowsExceptionAsync<EntityNotFoundException>(() => _studentService.GetByIdAsync(_context, _cancellationToken));
     }
@@ -88,8 +94,10 @@ public class StudentServiceTests
             Id = null,
             UniqueId = Guid.NewGuid()
         };
-        _context.State.Id = existingStudent.UniqueId.ToString()!;
-        _mediator.Send(Arg.Is<GetStudentByIdQuery>(q => q.UniqueId == existingStudent.UniqueId), Arg.Any<CancellationToken>())
+        _context.RouteValues = new Dictionary<string, object?>
+        {
+            { "StudentId", existingStudent.UniqueId.ToString() }
+        };        _mediator.Send(Arg.Is<GetStudentByIdQuery>(q => q.UniqueId == existingStudent.UniqueId), Arg.Any<CancellationToken>())
             .Returns(existingStudent);
 
         // Act
@@ -103,6 +111,11 @@ public class StudentServiceTests
     public async Task CreateAsync_ShouldAddStudentToList()
     {
         // Arrange
+        _configuration["JsonSchemaIdForStudent"].Returns("studentSchemaId"); 
+
+        _jsonSchemaProvider
+            .ResolveJsonSchemaAsync(Arg.Any<IScimV2Context>(), "studentSchemaId")
+            .Returns("{}");
         var studentJson = $"{{ \"registrationId\": \"TestStudent1\", \"userId\": 1 }}";
         _context.State.Resource = studentJson;
         
@@ -124,22 +137,24 @@ public class StudentServiceTests
     public async Task PatchAsync_ShouldThrowException_OperationFailed()
     {
         // Arrange
-        var existingUser = new Student()
+        var existingStudent = new Student()
         {
             Id = 1,
             UniqueId = Guid.NewGuid(),
             RegistrationId = "reg1"
         };
         _mediator.Send(Arg.Any<GetStudentByIdQuery>(), Arg.Any<CancellationToken>())
-            .Returns(existingUser);
+            .Returns(existingStudent);
         _context.State.Operations = "[ { \"op\": \"add\", \"path\": \"InvalidPath\", \"value\": \"Updated Reg\" } ]";
-        _context.State.Id = existingUser.UniqueId.ToString()!;
-        _context.Roles["Student"] = existingUser;
+        _context.RouteValues = new Dictionary<string, object?>
+        {
+            { "StudentId", existingStudent.UniqueId.ToString() }
+        };        _context.Roles["Student"] = existingStudent;
         // Act
-        var action = () => _studentService.PatchAsync(_context, _cancellationToken);
+        Task Action() => _studentService.PatchAsync(_context, _cancellationToken);
 
         // Assert
-        var ex = await Assert.ThrowsExceptionAsync<ArgumentException>(() => action());
+        var ex = await Assert.ThrowsExceptionAsync<ArgumentException>(() => Action());
         Assert.AreEqual("InvalidPath", ex.ParamName);
     }
     
@@ -147,7 +162,12 @@ public class StudentServiceTests
     public async Task PatchAsync_ShouldApplyOperationsToStudent()
     {
         // Arrange
-        var existingUser = new Student()
+        _configuration["JsonSchemaIdForStudent"].Returns("studentSchemaId"); 
+
+        _jsonSchemaProvider
+            .ResolveJsonSchemaAsync(Arg.Any<IScimV2Context>(), "studentSchemaId")
+            .Returns("{}");
+        var existingStudent = new Student()
         {
             Id = 1,
             UniqueId = Guid.NewGuid(),
@@ -166,15 +186,18 @@ public class StudentServiceTests
             UserId = 1
         };
         _mediator.Send(Arg.Any<GetStudentByIdQuery>(), Arg.Any<CancellationToken>())
-            .Returns(existingUser);
+            .Returns(existingStudent);
         _context.State.Operations = @"[ 
             { ""op"": ""add"", ""path"": ""RegistrationId"", ""value"": ""Updated Reg"" },
             { ""op"": ""add"", ""path"": ""Projects[Name eq \""Project1\""].Name"", ""value"": ""Project3"" },
             { ""op"": ""add"", ""path"": ""Projects"", ""value"": { ""Name"": ""ProjectNew"" } },
             { ""op"": ""remove"", ""path"": ""Projects[Name eq \""Project2\""]"" }
         ]";
-        _context.State.Id = existingUser.UniqueId.ToString()!;
-
+        _context.RouteValues = new Dictionary<string, object?>
+        {
+            { "StudentId", existingStudent.UniqueId.ToString() }
+        };
+        
         // Act
         await _studentService.PatchAsync(_context, _cancellationToken);
 
@@ -201,7 +224,12 @@ public class StudentServiceTests
     public async Task PatchAsync_EntityIsInvalidAfterPatch_ThrowsEntityInvalidException()
     {
         // Arrange
-        var existingUser = new Student()
+        _configuration["JsonSchemaIdForStudent"].Returns("studentSchemaId");
+        var studentSchema = (await File.ReadAllTextAsync("Entities/Schemas/Student.1.0.schema.json", _cancellationToken));
+        _jsonSchemaProvider
+            .ResolveJsonSchemaAsync(Arg.Any<IScimV2Context>(), "studentSchemaId")
+            .Returns(studentSchema);
+        var existingStudent = new Student()
         {
             Id = 1,
             UniqueId = Guid.NewGuid(),
@@ -219,18 +247,20 @@ public class StudentServiceTests
             }
         };
         _mediator.Send(Arg.Any<GetStudentByIdQuery>(), Arg.Any<CancellationToken>())
-            .Returns(existingUser);
+            .Returns(existingStudent);
         _context.State.Operations = @"[ 
             { ""op"": ""remove"", ""path"": ""RegistrationId"" },
             { ""op"": ""remove"", ""path"": ""Projects[Name eq \""Project2\""].Name"" }
         ]";
-        _context.State.Id = existingUser.UniqueId.ToString()!;
-
+        _context.RouteValues = new Dictionary<string, object?>
+        {
+            { "StudentId", existingStudent.UniqueId.ToString() }
+        };
         // Act
-        var action = () => _studentService.PatchAsync(_context, _cancellationToken);
+        Task Action() => _studentService.PatchAsync(_context, _cancellationToken);
 
         // Assert
-        var ex = await Assert.ThrowsExceptionAsync<EntityInvalidException>(async () => await action());
+        var ex = await Assert.ThrowsExceptionAsync<EntityInvalidException>(async () => await Action());
         Assert.AreEqual($"One or more validation errors occurred.", ex.Message);
         ex.ErrorMessages.Should().Contain(m => m.IndexOf("registrationId") > 0);
         ex.ErrorMessages.Should().Contain(m => m.IndexOf("projects[1].name") > 0);
@@ -243,8 +273,11 @@ public class StudentServiceTests
     public async Task DeleteAsync_ShouldThrowEntityNotFoundException_WhenStudentDoesNotExist()
     {
         // Arrange
-        _context.State.Id = Guid.NewGuid().ToString();
-
+        _context.RouteValues = new Dictionary<string, object?>
+        {
+            { "StudentId", Guid.NewGuid().ToString() }
+        };
+        
         // Act & Assert
         await Assert.ThrowsExceptionAsync<EntityNotFoundException>(() => _studentService.DeleteAsync(_context, _cancellationToken));
     }
@@ -258,7 +291,10 @@ public class StudentServiceTests
             Id = 1,
             UniqueId = Guid.NewGuid()
         };
-        _context.State.Id = existingStudent.UniqueId.ToString()!;
+        _context.RouteValues = new Dictionary<string, object?>
+        {
+            { "StudentId", existingStudent.UniqueId.ToString() }
+        };
         _mediator.Send(Arg.Is<GetStudentByIdQuery>(q => q.UniqueId == existingStudent.UniqueId), Arg.Any<CancellationToken>())
             .Returns(existingStudent);
 

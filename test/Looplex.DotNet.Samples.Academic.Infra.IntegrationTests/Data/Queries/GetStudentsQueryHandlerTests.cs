@@ -1,10 +1,11 @@
 using System.Dynamic;
+using Looplex.DotNet.Middlewares.ScimV2.Domain;
 using Looplex.DotNet.Samples.Academic.Domain.Commands;
 using Looplex.DotNet.Samples.Academic.Domain.Entities.Students;
 using Looplex.DotNet.Samples.Academic.Domain.Queries;
 using Looplex.DotNet.Samples.Academic.Infra.Data.CommandHandlers;
 using Looplex.DotNet.Samples.Academic.Infra.Data.QuerieHandlers;
-using Looplex.DotNet.Samples.WebAPI.IntegrationTests;
+using Looplex.DotNet.Samples.IntegrationTests;
 using Looplex.OpenForExtension.Abstractions.Contexts;
 using NSubstitute;
 
@@ -13,25 +14,34 @@ namespace Looplex.DotNet.Samples.Academic.Infra.IntegrationTests.Data.Queries;
 [TestClass]
 public class GetStudentsQueryHandlerTests : IntegrationTestsBase
 {
+    private IScimV2Context _context = null!;
+    
+    [TestInitialize]
+    public void Setup()
+    {
+        _context = Substitute.For<IScimV2Context>();
+        _context.GetSqlDatabaseService().Returns(SqlDatabaseService);
+    }
+
     [TestMethod]
     public async Task Handle_ValidRequest_GetStudentsFromDatabase()
     {
         // Arrange
-        var createStudentCommandHandler = new CreateStudentCommandHandler(DatabaseContext);
-        var context = Substitute.For<IContext>();
+        var createStudentCommandHandler = new CreateStudentCommandHandler();
         dynamic state = new ExpandoObject();
-        context.State.Returns(state);
+        _context.State.Returns(state);
         dynamic pagination = new ExpandoObject();
         pagination.Page = 1;
         pagination.PerPage = 2;
         state.Pagination = pagination;
-        var getStudentsQueryHandler = new GetStudentsQueryHandler(DatabaseContext);
+        var getStudentsQueryHandler = new GetStudentsQueryHandler();
         var getStudentsQuery = new GetStudentsQuery
         {
-            Context = context
+            Context = _context
         };
         var createStudentCommand = new CreateStudentCommand
-        {   
+        {
+            Context =_context,
             Student = new Student
             {
                 RegistrationId = "test1",
@@ -51,6 +61,7 @@ public class GetStudentsQueryHandlerTests : IntegrationTestsBase
         await createStudentCommandHandler.Handle(createStudentCommand, CancellationToken.None);
         createStudentCommand = new CreateStudentCommand
         {   
+            Context =_context,
             Student = new Student
             {
                 RegistrationId = "test2",
@@ -70,6 +81,7 @@ public class GetStudentsQueryHandlerTests : IntegrationTestsBase
         await createStudentCommandHandler.Handle(createStudentCommand, CancellationToken.None);
         createStudentCommand = new CreateStudentCommand
         {   
+            Context =_context,
             Student = new Student
             {
                 RegistrationId = "test3",
@@ -87,8 +99,7 @@ public class GetStudentsQueryHandlerTests : IntegrationTestsBase
             }
         };
         await createStudentCommandHandler.Handle(createStudentCommand, CancellationToken.None);
-        using var connection = DatabaseContext.CreateConnection();
-        var count = await connection.QueryFirstOrDefaultAsync<int>("select count(1) from students");
+        var count = await SqlDatabaseService.QueryFirstOrDefaultAsync<int>("select count(1) from students");
 
         // Act
         var students = await getStudentsQueryHandler.Handle(getStudentsQuery, CancellationToken.None);

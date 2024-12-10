@@ -1,5 +1,4 @@
-﻿using Looplex.DotNet.Core.Application.Abstractions.DataAccess;
-using Looplex.DotNet.Core.Application.Abstractions.Queries;
+﻿using Looplex.DotNet.Core.Application.Abstractions.Queries;
 using Looplex.DotNet.Core.Application.ExtensionMethods;
 using Looplex.DotNet.Middlewares.ScimV2.Domain.Entities.Messages;
 using Looplex.DotNet.Samples.Academic.Domain.Entities.Students;
@@ -7,7 +6,7 @@ using Looplex.DotNet.Samples.Academic.Domain.Queries;
 
 namespace Looplex.DotNet.Samples.Academic.Infra.Data.QuerieHandlers
 {
-    public class GetStudentsQueryHandler(IDatabaseContext context)
+    public class GetStudentsQueryHandler()
         : IQueryHandler<GetStudentsQuery, ListResponse>
     {
         public async Task<ListResponse> Handle(GetStudentsQuery request, CancellationToken cancellationToken)
@@ -26,19 +25,21 @@ namespace Looplex.DotNet.Samples.Academic.Infra.Data.QuerieHandlers
                 {where}
                 ";
 
-            using var connection = context.CreateConnection();
+            using var dbService = await request.Context.GetSqlDatabaseService();
 
-            int count = await connection.QueryFirstOrDefaultAsync<int>(query);
-
+            int count = await dbService.QueryFirstOrDefaultAsync<int>(query);
+            
+            var offset = startIndex - 1;
+            
             query = @$"
                 SELECT {select} FROM students
                 {where}
                 ORDER BY {orderBy}
                 OFFSET @offset ROWS
-                    FETCH NEXT @perPage ROWS ONLY";
+                    FETCH NEXT @itemsPerPage ROWS ONLY";
 
-            var students = (await connection
-                .QueryAsync<dynamic>(query, new { offset = startIndex, itemsPerPage }))
+            var students = (await dbService
+                .QueryAsync<dynamic>(query, new { offset, itemsPerPage }))
                 .Select(r => new Student
                 {
                     Id = r.id,
@@ -64,7 +65,7 @@ namespace Looplex.DotNet.Samples.Academic.Infra.Data.QuerieHandlers
                 ORDER BY {orderBy}
                 ";
                 
-                var projects = (await connection
+                var projects = (await dbService
                     .QueryAsync<Project>(query, new { Ids = students.Select(r => r.Id) }))
                     .ToList();
 

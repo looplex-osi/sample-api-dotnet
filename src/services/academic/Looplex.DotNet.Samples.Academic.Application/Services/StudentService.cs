@@ -8,20 +8,26 @@ using MediatR;
 using System.Threading.Tasks;
 using Looplex.DotNet.Core.Application.ExtensionMethods;
 using Looplex.DotNet.Core.Common.Exceptions;
+using Looplex.DotNet.Middlewares.ScimV2.Application.Abstractions.Providers;
+using Looplex.DotNet.Middlewares.ScimV2.Domain;
 using Looplex.DotNet.Middlewares.ScimV2.Domain.Entities;
 using Looplex.DotNet.Samples.Academic.Domain.Entities.Students;
 using Looplex.OpenForExtension.Abstractions.Commands;
 using Looplex.OpenForExtension.Abstractions.Contexts;
 using Looplex.OpenForExtension.Abstractions.ExtensionMethods;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using ScimPatch;
 
 namespace Looplex.DotNet.Samples.Academic.Application.Services
 {
-    public class StudentService(IMediator mediator) : IStudentService
+    public class StudentService(
+        IMediator mediator, 
+        IConfiguration configuration,
+        IJsonSchemaProvider jsonSchemaProvider) : IStudentService
     {
-        private readonly IMediator _mediator = mediator;
-        
+        private const string JsonSchemaIdForStudentKey = "JsonSchemaIdForStudent";
+
         public async Task GetAllAsync(IContext context, CancellationToken cancellationToken)
         {
             await context.Plugins.ExecuteAsync<IHandleInput>(context, cancellationToken);
@@ -38,9 +44,9 @@ namespace Looplex.DotNet.Samples.Academic.Application.Services
             {
                 var getStudentsQuery = new GetStudentsQuery()
                 {
-                    Context = context,
+                    Context = (IScimV2Context)context,
                 };
-                var result = await _mediator.Send(getStudentsQuery, cancellationToken);
+                var result = await mediator.Send(getStudentsQuery, cancellationToken);
                 context.Result = JsonConvert.SerializeObject(result, Student.Converter.Settings);
             }
 
@@ -53,14 +59,16 @@ namespace Looplex.DotNet.Samples.Academic.Application.Services
         {
             cancellationToken.ThrowIfCancellationRequested();
             
-            var id = Guid.Parse(context.GetRequiredValue<string>("Id"));
+            var scimContext = (IScimV2Context)context;
+            var id = Guid.Parse((string)scimContext.RouteValues["StudentId"]!);
             await context.Plugins.ExecuteAsync<IHandleInput>(context, cancellationToken);
 
             var getStudentByIdQuery = new GetStudentByIdQuery
             {
+                Context = (IScimV2Context)context,
                 UniqueId = id
             };
-            var student = await _mediator.Send(getStudentByIdQuery, cancellationToken);
+            var student = await mediator.Send(getStudentByIdQuery, cancellationToken);
             if (student == null)
             {
                 throw new EntityNotFoundException(nameof(Student), id.ToString());
@@ -87,7 +95,9 @@ namespace Looplex.DotNet.Samples.Academic.Application.Services
         public async Task CreateAsync(IContext context, CancellationToken cancellationToken)
         {
             var json = context.GetRequiredValue<string>("Resource");
-            var student = Resource.FromJson<Student>(json, out var messages);
+            var schemaId = configuration[JsonSchemaIdForStudentKey]!;
+            var jsonSchema = await jsonSchemaProvider.ResolveJsonSchemaAsync(context, schemaId);
+            var student = Resource.FromJson<Student>(json, jsonSchema, out var messages);
             await context.Plugins.ExecuteAsync<IHandleInput>(context, cancellationToken);
 
             if (messages.Count > 0)
@@ -107,9 +117,10 @@ namespace Looplex.DotNet.Samples.Academic.Application.Services
             {
                 var createStudentCommand = new CreateStudentCommand
                 {
+                    Context = (IScimV2Context)context,
                     Student = context.Roles["Student"]
                 };
-                await _mediator.Send(createStudentCommand, cancellationToken);
+                await mediator.Send(createStudentCommand, cancellationToken);
                 context.Result = context.Roles["Student"].Id;
             }
 
@@ -150,6 +161,9 @@ namespace Looplex.DotNet.Samples.Academic.Application.Services
 
             if (!context.SkipDefaultAction)
             {
+                var schemaId = configuration[JsonSchemaIdForStudentKey]!;
+                var jsonSchema = await jsonSchemaProvider.ResolveJsonSchemaAsync(context, schemaId);
+                
                 foreach (var operationNode in context.Roles["Operations"])
                 {
                     if (!await operationNode.TryApplyAsync())
@@ -158,16 +172,17 @@ namespace Looplex.DotNet.Samples.Academic.Application.Services
                     }
                 }
                 json = student.ToJson();
-                _ = Resource.FromJson<Student>(json, out var messages);
+                _ = Resource.FromJson<Student>(json, jsonSchema, out var messages);
                 if (messages.Count > 0)
                 {
                     throw new EntityInvalidException(messages.ToList());
                 }
                 var command = new UpdateStudentCommand
                 {
+                    Context = (IScimV2Context)context,
                     Student = student
                 };
-                await _mediator.Send(command, cancellationToken);
+                await mediator.Send(command, cancellationToken);
             }
 
             await context.Plugins.ExecuteAsync<IAfterAction>(context, cancellationToken);
@@ -179,7 +194,8 @@ namespace Looplex.DotNet.Samples.Academic.Application.Services
         {
             cancellationToken.ThrowIfCancellationRequested();
             
-            var id = Guid.Parse(context.GetRequiredValue<string>("Id"));
+            var scimContext = (IScimV2Context)context;
+            var id = Guid.Parse((string)scimContext.RouteValues["StudentId"]!);
             await context.Plugins.ExecuteAsync<IHandleInput>(context, cancellationToken);
 
             await GetByIdAsync(context, cancellationToken);
@@ -200,9 +216,10 @@ namespace Looplex.DotNet.Samples.Academic.Application.Services
             {
                 var command = new DeleteStudentCommand
                 {
+                    Context = (IScimV2Context)context,
                     UniqueId = id
                 };
-                await _mediator.Send(command, cancellationToken);
+                await mediator.Send(command, cancellationToken);
             }
 
             await context.Plugins.ExecuteAsync<IAfterAction>(context, cancellationToken);

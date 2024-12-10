@@ -13,9 +13,16 @@ services:
     volumes:
       - ${HOME}/.aspnet/https:/https:ro
 
-  looplex.dotnet.samples.db:
+  looplex.dotnet.samples.routing.db:
+    environment:
+      - SA_PASSWORD=!ooplex_D0tNet!s@
+      - ACCEPT_EULA=Y
+    ports:
+      - "1433:1433"
+
+  looplex.dotnet.samples.academic.db:
     environment:
      - SA_PASSWORD=!ooplex_D0tNet!s@
      - ACCEPT_EULA=Y
     ports:
-      - "1433:1433"
+      - "1435:1433"

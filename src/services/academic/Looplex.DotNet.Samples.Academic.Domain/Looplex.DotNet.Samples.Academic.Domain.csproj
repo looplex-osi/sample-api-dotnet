@@ -6,10 +6,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Looplex.DotNet.Core.Application.Abstractions" Version="2.1.1" />
-    <PackageReference Include="Looplex.DotNet.Core.Domain" Version="2.1.1" />
-    <PackageReference Include="Looplex.DotNet.Core.Infra" Version="2.1.1" />
-    <PackageReference Include="Looplex.DotNet.Middlewares.ScimV2" Version="2.0.3" />
+    <PackageReference Include="Looplex.DotNet.Core.Application.Abstractions" Version="3.0.1" />
+    <PackageReference Include="Looplex.DotNet.Core.Domain" Version="3.0.1" />
+    <PackageReference Include="Looplex.DotNet.Middlewares.ScimV2" Version="2.1.4" />
     <PackageReference Include="Looplex.OpenForExtension.Abstractions" Version="1.1.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0" />
   </ItemGroup>

@@ -4,9 +4,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.10.34928.147
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "database", "database", "{CD0FBF16-6884-4030-AB72-A88E63299C94}"
-	ProjectSection(SolutionItems) = preProject
-		src\database\db-dump.sql = src\database\db-dump.sql
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docker", "docker", "{FB905620-F926-47B3-AACE-1A479BCBDB85}"
 EndProject

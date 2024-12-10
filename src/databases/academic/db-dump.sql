@@ -4,7 +4,9 @@ GO
 IF DB_ID('dotnetsamples') IS NOT NULL
   set noexec on 
 
-CREATE DATABASE [dotnetsamples];
+-- IMPORTANT: looplex database (LATIN1_GENERAL_100_CI_AI_SC_UTF8) is REQUIRED as prerequisite.
+CREATE DATABASE [dotnetsamples]
+COLLATE LATIN1_GENERAL_100_CI_AI_SC_UTF8;
 GO
 
 USE [dotnetsamples]
