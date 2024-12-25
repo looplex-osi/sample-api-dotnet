@@ -7,11 +7,11 @@ namespace Looplex.DotNet.Samples.WebAPI.Routes.Academic
 {
     public static class StudentsRoutes
     {
-        public static Task UseStudentRoutesAsync(this IEndpointRouteBuilder app, CancellationToken cancellationToken)
+        public static Task UseStudentRoutesAsync(this IEndpointRouteBuilder app, string schemaIdStudent, CancellationToken cancellationToken)
         {
             return app.UseScimV2RoutesAsync<Student, IStudentService>(
                 "students",
-                "", // TODO
+                schemaIdStudent,
                 DefaultScimV2RouteOptions.CreateFor<StudentService>(),
                 cancellationToken);
         }

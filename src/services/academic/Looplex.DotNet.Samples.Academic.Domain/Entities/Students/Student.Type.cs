@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Newtonsoft.Json;
 
@@ -9,8 +10,11 @@ public partial class Student
     [JsonProperty("registrationId")]
     public virtual string? RegistrationId { get; set; }
 
-    [JsonProperty("userId")]
+    [JsonIgnore]
     public virtual int? UserId { get; set; }
+    
+    [JsonProperty("userId")]
+    public virtual Guid? UserUniqueId { get; set; }
 
     [JsonProperty("projects")]
     public virtual IList<Project> Projects { get; set; } = new ObservableCollection<Project>();

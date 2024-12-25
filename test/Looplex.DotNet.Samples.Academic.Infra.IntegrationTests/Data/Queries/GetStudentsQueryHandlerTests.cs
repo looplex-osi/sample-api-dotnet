@@ -6,7 +6,6 @@ using Looplex.DotNet.Samples.Academic.Domain.Queries;
 using Looplex.DotNet.Samples.Academic.Infra.Data.CommandHandlers;
 using Looplex.DotNet.Samples.Academic.Infra.Data.QuerieHandlers;
 using Looplex.DotNet.Samples.IntegrationTests;
-using Looplex.OpenForExtension.Abstractions.Contexts;
 using NSubstitute;
 
 namespace Looplex.DotNet.Samples.Academic.Infra.IntegrationTests.Data.Queries;

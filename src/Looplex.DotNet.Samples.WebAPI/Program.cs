@@ -22,7 +22,6 @@ using Polly;
 using Polly.Extensions.Http;
 using RestSharp;
 using Serilog;
-using StackExchange.Redis;
 
 namespace Looplex.DotNet.Samples.WebAPI
 {
@@ -85,6 +84,7 @@ namespace Looplex.DotNet.Samples.WebAPI
             var schemaIdApiKey = configuration["JsonSchemaIdForClientCredential"]!;
             var schemaIdUser = configuration["JsonSchemaIdForUser"]!;
             var schemaIdGroup = configuration["JsonSchemaIdForGroup"]!;
+            var schemaIdStudent = configuration["JsonSchemaIdForStudent"]!;
 
             app.UseTokenRoute(["AuthorizationService.CreateAccessToken"]);
             app.UseSchemaRoute([]);
@@ -94,7 +94,7 @@ namespace Looplex.DotNet.Samples.WebAPI
             app.UseApiKeyRoutesAsync(schemaIdApiKey).GetAwaiter().GetResult();
             app.UseUserRoutesAsync(schemaIdUser).GetAwaiter().GetResult();
             app.UseGroupRoutesAsync(schemaIdGroup).GetAwaiter().GetResult();
-            app.UseStudentRoutesAsync(CancellationToken.None).GetAwaiter().GetResult();
+            app.UseStudentRoutesAsync(schemaIdStudent, CancellationToken.None).GetAwaiter().GetResult();
 
             app.UseHttpsRedirection();
 
@@ -103,11 +103,11 @@ namespace Looplex.DotNet.Samples.WebAPI
 
         private static void RegisterServices(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddTransient<IRestClient>(sp =>
+            services.AddTransient<IRestClient>(_ =>
             {
                 var options = new RestClientOptions
                 {
-                    ThrowOnAnyError = true
+                    ThrowOnAnyError = false
                 };
                 return new RestClient(options);
             });
