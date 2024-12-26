@@ -11,7 +11,7 @@ public abstract class IntegrationTestsBase
     {
         get 
         {
-            if (_sqlDatabaseService ==  null)
+            if (_sqlDatabaseService == null)
             {
                 var connectionString = "Server=localhost,1434;Database=dotnetsamples;User Id=samplesUser;Password=!ooplex_D0tNet!;";
                 var connection = new SqlConnection(connectionString);
