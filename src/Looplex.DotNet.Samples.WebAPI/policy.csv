@@ -1,0 +1,16 @@
+# Define permissions for groups
+p, group_admins, sampleapi, Users, read
+p, group_admins, sampleapi, Users, write
+p, group_admins, sampleapi, Users, delete
+p, group_admins, sampleapi, Groups, read
+p, group_admins, sampleapi, Groups, write
+p, group_admins, sampleapi, Groups, delete
+p, group_admins, sampleapi, api-keys, read
+p, group_admins, sampleapi, api-keys, write
+p, group_admins, sampleapi, api-keys, delete
+p, group_admins, sampleapi, Students, read
+p, group_admins, sampleapi, Students, write
+p, group_admins, sampleapi, Students, delete
+
+# Assign users to groups
+g, guilherme.camara@looplex.com.br, group_admins

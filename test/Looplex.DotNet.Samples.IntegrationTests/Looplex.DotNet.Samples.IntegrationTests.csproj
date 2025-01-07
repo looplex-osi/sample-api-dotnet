@@ -15,7 +15,7 @@
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Looplex.DotNet.Core.Application.Abstractions" Version="3.0.4" />
-        <PackageReference Include="Looplex.DotNet.Services.SqlDatabases" Version="2.2.5" />
+        <PackageReference Include="Looplex.DotNet.Services.SqlDatabases" Version="2.2.7" />
         <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.0" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
         <PackageReference Include="MSTest.TestAdapter" Version="3.6.0" />

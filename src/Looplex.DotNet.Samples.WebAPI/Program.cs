@@ -1,3 +1,5 @@
+using System.Reflection;
+using Casbin;
 using Looplex.DotNet.Core.Application.Abstractions.Factories;
 using Looplex.DotNet.Core.Application.Abstractions.Services;
 using Looplex.DotNet.Middlewares.ApiKeys.ExtensionMethods;
@@ -44,9 +46,9 @@ namespace Looplex.DotNet.Samples.WebAPI
             builder.Services.AddRedisHealthChecks();
             builder.Services.AddSqlDatabaseHealthChecks();
             builder.Services.AddMemoryCache();
-            
+
             RegisterServices(builder.Services, configuration);
-            
+
             ConfigureLogging(builder, configuration);
             ConfigureResponseCache(builder);
             //ConfigureTelemetry(builder);
@@ -57,9 +59,9 @@ namespace Looplex.DotNet.Samples.WebAPI
 
                 // config.AddConsumers(typeof(UserDeletedConsumer).Assembly);
             });
-            
+
             var app = builder.Build();
-            
+
             app.MapHealthChecks("/health", new HealthCheckOptions
             {
                 ResponseWriter = async (context, report) =>
@@ -123,11 +125,11 @@ namespace Looplex.DotNet.Samples.WebAPI
             var redisConnectionString = configuration["RedisConnectionString"]!;
             services.AddRedisServices(redisConnectionString);
             services.AddSqlDatabaseServices();
-            
+
             services.AddAcademicServices();
             services.AddApiKeyServices();
             services.AddScimV2Services();
-            services.AddOAuth2Services();
+            services.AddOAuth2Services(InitRbacEnforcer());
             services.AddApiKeyInMemoryServices();
             services.AddScimV2InMemoryServices();
 
@@ -147,6 +149,21 @@ namespace Looplex.DotNet.Samples.WebAPI
             builder.Services.AddResponseCaching();
         }
 
+        private static IEnforcer InitRbacEnforcer()
+        {
+            var dir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)
+                                ?? throw new InvalidOperationException("Could not determine directory");
+            var modelPath = Path.Combine(dir, "model.conf");
+            var policyPath = Path.Combine(dir, "policy.csv");
+
+            if (!File.Exists(modelPath) || !File.Exists(policyPath))
+            {
+                throw new FileNotFoundException("Required Casbin configuration files are missing");
+            }
+
+            return new Enforcer(modelPath, policyPath);
+        }
+
         private static void ConfigureTelemetry(WebApplicationBuilder builder)
         {
             const string serviceName = "looplex-dotnet-sample";
@@ -159,20 +176,22 @@ namespace Looplex.DotNet.Samples.WebAPI
                     .AddConsoleExporter();
             });
             builder.Services.AddOpenTelemetry()
-                  .ConfigureResource(resource => resource.AddService(serviceName))
-                  .WithTracing(tracing => tracing
-                      .AddAspNetCoreInstrumentation()
-                      .AddConsoleExporter())
-                  .WithMetrics(metrics => metrics
-                      .AddAspNetCoreInstrumentation()
-                      .AddConsoleExporter());
+                .ConfigureResource(resource => resource.AddService(serviceName))
+                .WithTracing(tracing => tracing
+                    .AddAspNetCoreInstrumentation()
+                    .AddConsoleExporter())
+                .WithMetrics(metrics => metrics
+                    .AddAspNetCoreInstrumentation()
+                    .AddConsoleExporter());
         }
-    
+
         static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
         {
             return HttpPolicyExtensions
                 .HandleTransientHttpError() // Handle transient errors (5xx, 408, etc.)
-                .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))); // Retry 3 times with exponential backoff
+                .WaitAndRetryAsync(3,
+                    retryAttempt =>
+                        TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))); // Retry 3 times with exponential backoff
         }
     }
 }

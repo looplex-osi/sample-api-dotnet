@@ -41,7 +41,7 @@ public class StudentServiceTests
         _context.Roles.Returns(roles);
         _cancellationToken = new CancellationToken();
     }
-    
+
     [TestMethod]
     public async Task GetAllAsync_ShouldReturnPaginatedCollection()
     {
@@ -62,14 +62,15 @@ public class StudentServiceTests
                 Resources = [existingStudent],
                 TotalResults = 1,
             });
-            
+
         // Act
         await _studentService.GetAllAsync(_context, _cancellationToken);
 
         // Assert
         var result = JsonConvert.DeserializeObject<ListResponse>((string)_context.Result!)!;
         Assert.AreEqual(1, result.TotalResults);
-        JsonConvert.DeserializeObject<Student>(result.Resources[0].ToString()!).Should().BeEquivalentTo(existingStudent);
+        JsonConvert.DeserializeObject<Student>(result.Resources[0].ToString()!).Should()
+            .BeEquivalentTo(existingStudent);
     }
 
     [TestMethod]
@@ -80,9 +81,10 @@ public class StudentServiceTests
         {
             { "StudentId", Guid.NewGuid().ToString() }
         };
-        
+
         // Act & Assert
-        await Assert.ThrowsExceptionAsync<EntityNotFoundException>(() => _studentService.GetByIdAsync(_context, _cancellationToken));
+        await Assert.ThrowsExceptionAsync<EntityNotFoundException>(() =>
+            _studentService.GetByIdAsync(_context, _cancellationToken));
     }
 
     [TestMethod]
@@ -97,39 +99,46 @@ public class StudentServiceTests
         _context.RouteValues = new Dictionary<string, object?>
         {
             { "StudentId", existingStudent.UniqueId.ToString() }
-        };        _mediator.Send(Arg.Is<GetStudentByIdQuery>(q => q.UniqueId == existingStudent.UniqueId), Arg.Any<CancellationToken>())
+        };
+        _mediator.Send(Arg.Is<GetStudentByIdQuery>(q => q.UniqueId == existingStudent.UniqueId),
+                Arg.Any<CancellationToken>())
             .Returns(existingStudent);
 
         // Act
         await _studentService.GetByIdAsync(_context, _cancellationToken);
-            
+
         // Assert
         JsonConvert.DeserializeObject<Student>(_context.Result!.ToString()!).Should().BeEquivalentTo(existingStudent);
     }
-    
+
     [TestMethod]
     public async Task CreateAsync_ShouldAddStudentToList()
     {
         // Arrange
-        _configuration["JsonSchemaIdForStudent"].Returns("studentSchemaId"); 
+        _configuration["JsonSchemaIdForStudent"].Returns("studentSchemaId");
+        var registrationId = "RegistrationId1234";
+        var userId = Guid.NewGuid();
 
         _jsonSchemaProvider
             .ResolveJsonSchemaAsync(Arg.Any<IScimV2Context>(), "studentSchemaId")
             .Returns("{}");
-        var studentJson = $"{{ \"registrationId\": \"TestStudent1\", \"userId\": 1 }}";
+        var studentJson = $"{{ \"registrationId\": \"{registrationId}\", \"userId\": \"{userId}\" }}";
         _context.State.Resource = studentJson;
-        
+
         // Act
         await _studentService.CreateAsync(_context, _cancellationToken);
 
         // Assert
         await _mediator.Received(1)
-            .Send(Arg.Is<CreateStudentCommand>(c => AssertThatCreateStudentIsValid(c.Student)), Arg.Any<CancellationToken>());
+            .Send(Arg.Is<CreateStudentCommand>(c => AssertThatCreateStudentIsValid(c.Student, registrationId, userId)),
+                Arg.Any<CancellationToken>());
     }
 
-    private bool AssertThatCreateStudentIsValid(Student student)
+    private bool AssertThatCreateStudentIsValid(Student student, string registrationId, Guid userId)
     {
-        Assert.AreEqual(student.RegistrationId, "TestStudent1");
+        Assert.AreEqual(student.RegistrationId, registrationId);
+        Assert.AreEqual(student.UserUniqueId, userId);
+
         return true;
     }
 
@@ -149,7 +158,9 @@ public class StudentServiceTests
         _context.RouteValues = new Dictionary<string, object?>
         {
             { "StudentId", existingStudent.UniqueId.ToString() }
-        };        _context.Roles["Student"] = existingStudent;
+        };
+        _context.Roles["Student"] = existingStudent;
+
         // Act
         Task Action() => _studentService.PatchAsync(_context, _cancellationToken);
 
@@ -157,12 +168,12 @@ public class StudentServiceTests
         var ex = await Assert.ThrowsExceptionAsync<ArgumentException>(() => Action());
         Assert.AreEqual("InvalidPath", ex.ParamName);
     }
-    
+
     [TestMethod]
     public async Task PatchAsync_ShouldApplyOperationsToStudent()
     {
         // Arrange
-        _configuration["JsonSchemaIdForStudent"].Returns("studentSchemaId"); 
+        _configuration["JsonSchemaIdForStudent"].Returns("studentSchemaId");
 
         _jsonSchemaProvider
             .ResolveJsonSchemaAsync(Arg.Any<IScimV2Context>(), "studentSchemaId")
@@ -197,7 +208,7 @@ public class StudentServiceTests
         {
             { "StudentId", existingStudent.UniqueId.ToString() }
         };
-        
+
         // Act
         await _studentService.PatchAsync(_context, _cancellationToken);
 
@@ -214,18 +225,21 @@ public class StudentServiceTests
         student.ChangedPropertyNotification.ChangedProperties.Should().BeEquivalentTo(["RegistrationId"]);
         student.Projects[0].ChangedPropertyNotification.ChangedProperties.Should().BeEquivalentTo(["Name"]);
         Assert.IsTrue(student.ChangedPropertyNotification.AddedItems.ContainsKey("Projects"));
-        student.ChangedPropertyNotification.AddedItems["Projects"].Should().BeEquivalentTo([new Project() { Name = "ProjectNew" }]);
+        student.ChangedPropertyNotification.AddedItems["Projects"].Should()
+            .BeEquivalentTo([new Project() { Name = "ProjectNew" }]);
         Assert.IsTrue(student.ChangedPropertyNotification.RemovedItems.ContainsKey("Projects"));
-        student.ChangedPropertyNotification.RemovedItems["Projects"].Should().BeEquivalentTo([new Project() { Name = "Project2" }]);
+        student.ChangedPropertyNotification.RemovedItems["Projects"].Should()
+            .BeEquivalentTo([new Project() { Name = "Project2" }]);
         return true;
     }
-    
+
     [TestMethod]
     public async Task PatchAsync_EntityIsInvalidAfterPatch_ThrowsEntityInvalidException()
     {
         // Arrange
         _configuration["JsonSchemaIdForStudent"].Returns("studentSchemaId");
-        var studentSchema = (await File.ReadAllTextAsync("Entities/Schemas/Student.1.0.schema.json", _cancellationToken));
+        var studentSchema =
+            (await File.ReadAllTextAsync("Entities/Schemas/Student.1.0.schema.json", _cancellationToken));
         _jsonSchemaProvider
             .ResolveJsonSchemaAsync(Arg.Any<IScimV2Context>(), "studentSchemaId")
             .Returns(studentSchema);
@@ -256,6 +270,7 @@ public class StudentServiceTests
         {
             { "StudentId", existingStudent.UniqueId.ToString() }
         };
+
         // Act
         Task Action() => _studentService.PatchAsync(_context, _cancellationToken);
 
@@ -277,11 +292,12 @@ public class StudentServiceTests
         {
             { "StudentId", Guid.NewGuid().ToString() }
         };
-        
+
         // Act & Assert
-        await Assert.ThrowsExceptionAsync<EntityNotFoundException>(() => _studentService.DeleteAsync(_context, _cancellationToken));
+        await Assert.ThrowsExceptionAsync<EntityNotFoundException>(() =>
+            _studentService.DeleteAsync(_context, _cancellationToken));
     }
-    
+
     [TestMethod]
     public async Task DeleteAsync_ShouldRemoveStudentFromList_WhenStudentDoesExist()
     {
@@ -295,7 +311,8 @@ public class StudentServiceTests
         {
             { "StudentId", existingStudent.UniqueId.ToString() }
         };
-        _mediator.Send(Arg.Is<GetStudentByIdQuery>(q => q.UniqueId == existingStudent.UniqueId), Arg.Any<CancellationToken>())
+        _mediator.Send(Arg.Is<GetStudentByIdQuery>(q => q.UniqueId == existingStudent.UniqueId),
+                Arg.Any<CancellationToken>())
             .Returns(existingStudent);
 
         // Act
@@ -303,6 +320,7 @@ public class StudentServiceTests
 
         // Assert
         await _mediator.Received(1)
-            .Send(Arg.Is<DeleteStudentCommand>(c => c.UniqueId == existingStudent.UniqueId), Arg.Any<CancellationToken>());
+            .Send(Arg.Is<DeleteStudentCommand>(c => c.UniqueId == existingStudent.UniqueId),
+                Arg.Any<CancellationToken>());
     }
 }
