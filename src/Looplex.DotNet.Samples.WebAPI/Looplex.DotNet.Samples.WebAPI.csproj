@@ -11,27 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Looplex.DotNet.Services.Redis" Version="2.2.7" />
-    <PackageReference Include="Looplex.DotNet.Services.SqlDatabases" Version="2.2.7" />
-    <PackageReference Include="Looplex.OpenForExtension" Version="1.1.1" />
-    <PackageReference Include="Looplex.DotNet.Core.Middlewares" Version="3.0.4" />
-    <PackageReference Include="Looplex.DotNet.Core.WebAPI" Version="3.0.4" />
-    <PackageReference Include="Looplex.DotNet.Middlewares.ApiKeys" Version="2.3.1" />
-    <PackageReference Include="Looplex.DotNet.Services.ApiKeys.InMemory" Version="2.2.7" />
-    <PackageReference Include="Looplex.DotNet.Services.ScimV2.InMemory" Version="2.2.7" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="9.0.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
-    <PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.9.0" />
-    <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.9.0" />
-    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.9.0" />
-    <PackageReference Include="Polly" Version="8.5.0" />
-    <PackageReference Include="Serilog" Version="4.0.1" />
-    <PackageReference Include="Serilog.Exceptions" Version="8.4.0" />
-    <PackageReference Include="Serilog.Extensions.Hosting" Version="8.0.0" />
-    <PackageReference Include="Serilog.Settings.Configuration" Version="8.0.2" />
-    <PackageReference Include="Serilog.Sinks.Async" Version="2.0.0" />
-    <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+    <PackageReference Include="Looplex.DotNet.Middlewares.ScimV2.WebApi" Version="2.4.2" />
   </ItemGroup>
 
   <ItemGroup>
