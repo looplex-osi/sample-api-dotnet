@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Looplex.DotNet.Middlewares.ScimV2.WebApi" Version="2.4.2" />
+    <PackageReference Include="Looplex.DotNet.Middlewares.ScimV2.WebApi" Version="2.4.3" />
   </ItemGroup>
 
   <ItemGroup>

@@ -5,6 +5,7 @@ using Looplex.DotNet.Core.Common.Exceptions;
 using Looplex.DotNet.Middlewares.ScimV2.Application.Abstractions.Providers;
 using Looplex.DotNet.Middlewares.ScimV2.Domain;
 using Looplex.DotNet.Middlewares.ScimV2.Domain.Entities.Messages;
+using Looplex.DotNet.Middlewares.ScimV2.Services;
 using Looplex.DotNet.Samples.Academic.Application.Abstractions.Services;
 using Looplex.DotNet.Samples.Academic.Application.Services;
 using Looplex.DotNet.Samples.Academic.Domain.Commands;
@@ -33,7 +34,7 @@ public class StudentServiceTests
         _configuration = Substitute.For<IConfiguration>();
         _jsonSchemaProvider = Substitute.For<IJsonSchemaProvider>();
         _mediator = Substitute.For<IMediator>();
-        _studentService = new StudentService(_mediator, _configuration, _jsonSchemaProvider);
+        _studentService = new StudentService(new DefaultExtensionPointOrchestrator(), _mediator, _configuration, _jsonSchemaProvider);
         _context = Substitute.For<IScimV2Context>();
         var state = new ExpandoObject();
         _context.State.Returns(state);
