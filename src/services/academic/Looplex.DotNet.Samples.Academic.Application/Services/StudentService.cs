@@ -274,7 +274,7 @@ public class StudentService(
         {
             if (!await operationNode.TryApplyAsync())
             {
-                throw operationNode.OperationException;
+                throw operationNode.OperationException!;
             }
         }
         var json = student.ToJson();

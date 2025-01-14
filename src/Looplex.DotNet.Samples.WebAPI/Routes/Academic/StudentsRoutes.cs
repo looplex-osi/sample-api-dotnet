@@ -1,8 +1,8 @@
 using Looplex.DotNet.Middlewares.ScimV2.ExtensionMethods;
-using Looplex.DotNet.Middlewares.ScimV2.WebApi.Routes;
 using Looplex.DotNet.Samples.Academic.Application.Abstractions.Services;
 using Looplex.DotNet.Samples.Academic.Application.Services;
 using Looplex.DotNet.Samples.Academic.Domain.Entities.Students;
+using Looplex.DotNet.WebApi.Routes;
 
 namespace Looplex.DotNet.Samples.WebAPI.Routes.Academic
 {

@@ -45,6 +45,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "migrations", "migrations", 
 		src\database\migrations\0002_InitAcademicModule.sql = src\database\migrations\0002_InitAcademicModule.sql
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Looplex.DotNet.WebApi", "src\Looplex.DotNet.WebApi\Looplex.DotNet.WebApi.csproj", "{875FF536-2F5B-4D4B-9C6F-11573E3B414F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +89,10 @@ Global
 		{72CB8A6D-2D4F-4DBE-85D6-5E095C91F1C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{72CB8A6D-2D4F-4DBE-85D6-5E095C91F1C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{72CB8A6D-2D4F-4DBE-85D6-5E095C91F1C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{875FF536-2F5B-4D4B-9C6F-11573E3B414F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{875FF536-2F5B-4D4B-9C6F-11573E3B414F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{875FF536-2F5B-4D4B-9C6F-11573E3B414F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{875FF536-2F5B-4D4B-9C6F-11573E3B414F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -107,6 +113,7 @@ Global
 		{72CB8A6D-2D4F-4DBE-85D6-5E095C91F1C5} = {575E31CD-24AD-4C85-B2AB-E28EC255E3F5}
 		{3FABDB61-4D39-4252-B517-26C217CCDB44} = {575E31CD-24AD-4C85-B2AB-E28EC255E3F5}
 		{B7ED529F-D62B-4559-80A7-3844856EDD8F} = {CD0FBF16-6884-4030-AB72-A88E63299C94}
+		{875FF536-2F5B-4D4B-9C6F-11573E3B414F} = {1802E765-A3B4-428F-BAB4-A83CD7BAFD4F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2E6A64D4-9D37-482E-8B33-B32932B291DC}
