@@ -1,16 +1,34 @@
 # Define permissions for groups
-p, group_admins, sampleapi, Users, read
-p, group_admins, sampleapi, Users, write
-p, group_admins, sampleapi, Users, delete
-p, group_admins, sampleapi, Groups, read
-p, group_admins, sampleapi, Groups, write
-p, group_admins, sampleapi, Groups, delete
-p, group_admins, sampleapi, api-keys, read
-p, group_admins, sampleapi, api-keys, write
-p, group_admins, sampleapi, api-keys, delete
-p, group_admins, sampleapi, Students, read
-p, group_admins, sampleapi, Students, write
-p, group_admins, sampleapi, Students, delete
+p, group_admins, sampleapi, BulkService, ExecuteBulkOperationsAsync
+
+p, group_admins, sampleapi, UserService, GetAllAsync
+p, group_admins, sampleapi, UserService, GetByIdAsync
+p, group_admins, sampleapi, UserService, CreateAsync
+p, group_admins, sampleapi, UserService, UpdateAsync
+p, group_admins, sampleapi, UserService, PatchAsync
+p, group_admins, sampleapi, UserService, DeleteAsync
+
+p, group_admins, sampleapi, GroupService, GetAllAsync
+p, group_admins, sampleapi, GroupService, GetByIdAsync
+p, group_admins, sampleapi, GroupService, CreateAsync
+p, group_admins, sampleapi, GroupService, UpdateAsync
+p, group_admins, sampleapi, GroupService, PatchAsync
+p, group_admins, sampleapi, GroupService, DeleteAsync
+
+p, group_admins, sampleapi, ApiKeyService, GetAllAsync
+p, group_admins, sampleapi, ApiKeyService, GetByIdAsync
+p, group_admins, sampleapi, ApiKeyService, CreateAsync
+p, group_admins, sampleapi, ApiKeyService, UpdateAsync
+p, group_admins, sampleapi, ApiKeyService, PatchAsync
+p, group_admins, sampleapi, ApiKeyService, DeleteAsync
+p, group_admins, sampleapi, ApiKeyService, GetByIdAndSecretOrDefaultAsync
+
+p, group_admins, sampleapi, StudentService, GetAllAsync
+p, group_admins, sampleapi, StudentService, GetByIdAsync
+p, group_admins, sampleapi, StudentService, CreateAsync
+p, group_admins, sampleapi, StudentService, UpdateAsync
+p, group_admins, sampleapi, StudentService, PatchAsync
+p, group_admins, sampleapi, StudentService, DeleteAsync
 
 # Assign users to groups
 g, guilherme.camara@looplex.com.br, group_admins, sampleapi
