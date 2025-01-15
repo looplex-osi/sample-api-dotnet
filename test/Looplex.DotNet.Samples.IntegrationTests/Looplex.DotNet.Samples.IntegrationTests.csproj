@@ -14,12 +14,12 @@
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Looplex.DotNet.Core.Application.Abstractions" Version="3.0.5" />
-        <PackageReference Include="Looplex.DotNet.Services.SqlDatabases" Version="2.2.8" />
-        <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.0" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
-        <PackageReference Include="MSTest.TestAdapter" Version="3.6.0" />
-        <PackageReference Include="MSTest.TestFramework" Version="3.6.0" />
+        <PackageReference Include="Looplex.DotNet.Core.Application.Abstractions" Version="3.2.1" />
+        <PackageReference Include="Looplex.DotNet.Services.SqlDatabases" Version="2.3.1" />
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.1" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+        <PackageReference Include="MSTest.TestAdapter" Version="3.7.1" />
+        <PackageReference Include="MSTest.TestFramework" Version="3.7.1" />
     </ItemGroup>
 
     <ItemGroup>

@@ -13,4 +13,4 @@ p, group_admins, sampleapi, Students, write
 p, group_admins, sampleapi, Students, delete
 
 # Assign users to groups
-g, guilherme.camara@looplex.com.br, group_admins
+g, guilherme.camara@looplex.com.br, group_admins, sampleapi

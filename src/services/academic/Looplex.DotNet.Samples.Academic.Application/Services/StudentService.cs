@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using MediatR;
 using System.Threading.Tasks;
+using Looplex.DotNet.Core.Application.Abstractions.Services;
 using Looplex.DotNet.Core.Application.ExtensionMethods;
 using Looplex.DotNet.Core.Common.Exceptions;
 using Looplex.DotNet.Middlewares.ScimV2.Application.Abstractions.OpenForExtensions;
@@ -24,10 +25,14 @@ using Looplex.DotNet.Samples.Academic.Application.Abstractions.Services;
 namespace Looplex.DotNet.Samples.Academic.Application.Services;
 
 public class StudentService(
+    IRbacService rbacService,
     IExtensionPointOrchestrator extensionPointOrchestrator,
     IMediator mediator, 
     IConfiguration configuration,
-    IJsonSchemaProvider jsonSchemaProvider) : BaseCrudService(extensionPointOrchestrator), IStudentService
+    IJsonSchemaProvider jsonSchemaProvider) 
+    : BaseCrudService(
+        rbacService,
+        extensionPointOrchestrator), IStudentService
 {
     private const string JsonSchemaIdForStudentKey = "JsonSchemaIdForStudent";
     protected override Task GetAllHandleInputAsync(IContext context, CancellationToken cancellationToken)

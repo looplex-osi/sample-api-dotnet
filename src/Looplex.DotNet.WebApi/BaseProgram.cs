@@ -3,6 +3,7 @@ using Looplex.DotNet.Middlewares.ApiKeys.ExtensionMethods;
 using Looplex.DotNet.Middlewares.OAuth2.ExtensionMethods;
 using Looplex.DotNet.Middlewares.ScimV2.ExtensionMethods;
 using Looplex.DotNet.Services.ApiKeys.InMemory.ExtensionMethods;
+using Looplex.DotNet.Services.Rbac.ExtensionMethod;
 using Looplex.DotNet.Services.Redis.ExtensionMethods;
 using Looplex.DotNet.Services.ScimV2.InMemory.ExtensionMethods;
 using Looplex.DotNet.Services.SqlDatabases.ExtensionMethods;
@@ -135,10 +136,11 @@ public abstract class BaseProgram
             
         services.AddRedisServices(redisConnectionString);
         services.AddSqlDatabaseServices();
-
+        services.AddRbacServices(InitRbacEnforcer());
+        
         services.AddApiKeyServices();
         services.AddScimV2Services();
-        services.AddOAuth2Services(InitRbacEnforcer());
+        services.AddOAuth2Services();
         services.AddApiKeyInMemoryServices();
         services.AddScimV2InMemoryServices();
     }

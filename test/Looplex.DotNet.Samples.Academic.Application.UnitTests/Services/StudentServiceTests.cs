@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Dynamic;
 using FluentAssertions;
+using Looplex.DotNet.Core.Application.Abstractions.Services;
 using Looplex.DotNet.Core.Common.Exceptions;
 using Looplex.DotNet.Middlewares.ScimV2.Application.Abstractions.Providers;
 using Looplex.DotNet.Middlewares.ScimV2.Domain;
@@ -21,6 +22,7 @@ namespace Looplex.DotNet.Samples.Academic.Application.UnitTests.Services;
 [TestClass]
 public class StudentServiceTests
 {
+    private IRbacService _rbacService = null!;
     private IMediator _mediator = null!;
     private IStudentService _studentService = null!;
     private IConfiguration _configuration = null!;
@@ -34,7 +36,8 @@ public class StudentServiceTests
         _configuration = Substitute.For<IConfiguration>();
         _jsonSchemaProvider = Substitute.For<IJsonSchemaProvider>();
         _mediator = Substitute.For<IMediator>();
-        _studentService = new StudentService(new DefaultExtensionPointOrchestrator(), _mediator, _configuration, _jsonSchemaProvider);
+        _rbacService = Substitute.For<IRbacService>();
+        _studentService = new StudentService(_rbacService, new DefaultExtensionPointOrchestrator(), _mediator, _configuration, _jsonSchemaProvider);
         _context = Substitute.For<IScimV2Context>();
         var state = new ExpandoObject();
         _context.State.Returns(state);
