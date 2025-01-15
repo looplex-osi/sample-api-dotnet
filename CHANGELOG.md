@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="1.2.0"></a>
+## 1.2.0 (2025-01-15)
+
+### Features
+
+* **sdk:** upgrade to .net 9
+
+### Bug Fixes
+
+* **dependencies:** upgrade nuget packages
+* **rbac:** upgrade rbac package and fix rbac config files
+
 <a name="1.1.2"></a>
 ## 1.1.2 (2025-01-14)
 
