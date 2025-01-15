@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Looplex.DotNet.Samples.Academic.Domain.Commands;
-using Looplex.DotNet.Samples.Academic.Domain.Queries;
 using MediatR;
 using System.Threading.Tasks;
 using Looplex.DotNet.Core.Application.ExtensionMethods;
@@ -13,12 +11,14 @@ using Looplex.DotNet.Middlewares.ScimV2.Application.Abstractions.Providers;
 using Looplex.DotNet.Middlewares.ScimV2.Domain;
 using Looplex.DotNet.Middlewares.ScimV2.Domain.Entities;
 using Looplex.DotNet.Middlewares.ScimV2.Domain.ExtensionMethods;
-using Looplex.DotNet.Samples.Academic.Domain.Entities.Students;
 using Looplex.OpenForExtension.Abstractions.Contexts;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using ScimPatch;
 using Looplex.DotNet.Middlewares.ScimV2.Services;
+using Looplex.DotNet.Samples.Academic.Domain.Commands;
+using Looplex.DotNet.Samples.Academic.Domain.Queries;
+using Looplex.DotNet.Samples.Academic.Domain.Entities.Students;
 using Looplex.DotNet.Samples.Academic.Application.Abstractions.Services;
 
 namespace Looplex.DotNet.Samples.Academic.Application.Services;
@@ -47,11 +47,13 @@ public class StudentService(
 
     protected override Task GetAllBindAsync(IContext context, CancellationToken cancellationToken)
     {
-        return Task.CompletedTask;    }
+        return Task.CompletedTask;
+    }
 
     protected override Task GetAllBeforeActionAsync(IContext context, CancellationToken cancellationToken)
     {
-        return Task.CompletedTask;    }
+        return Task.CompletedTask;
+    }
 
     protected override async Task GetAllDefaultActionAsync(IContext context, CancellationToken cancellationToken)
     {
