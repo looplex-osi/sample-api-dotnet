@@ -15,13 +15,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Looplex.DotNet.Services.Redis" Version="2.3.1" />
-    <PackageReference Include="Looplex.DotNet.Services.SqlDatabases" Version="2.3.1" />
-    <PackageReference Include="Looplex.DotNet.Services.Rbac" Version="2.3.1" />
-    <PackageReference Include="Looplex.DotNet.Core.WebAPI" Version="3.2.1" />
-    <PackageReference Include="Looplex.DotNet.Middlewares.ApiKeys" Version="2.5.0" />
-    <PackageReference Include="Looplex.DotNet.Services.ApiKeys.InMemory" Version="2.3.1" />
-    <PackageReference Include="Looplex.DotNet.Services.ScimV2.InMemory" Version="2.3.1" />
+    <PackageReference Include="Looplex.DotNet.Services.Redis" Version="2.3.3" />
+    <PackageReference Include="Looplex.DotNet.Services.SqlDatabases" Version="2.3.2" />
+    <PackageReference Include="Looplex.DotNet.Services.Rbac" Version="2.3.3" />
+    <PackageReference Include="Looplex.DotNet.Core.WebAPI" Version="3.2.3" />
+    <PackageReference Include="Looplex.DotNet.Middlewares.ApiKeys" Version="2.5.3" />
+    <PackageReference Include="Looplex.DotNet.Services.ApiKeys.InMemory" Version="2.3.3" />
+    <PackageReference Include="Looplex.DotNet.Services.ScimV2.InMemory" Version="2.3.3" />
     <PackageReference Include="RestSharp" Version="112.1.0"/>
     <PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.10.0" />
     <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.10.0" />
