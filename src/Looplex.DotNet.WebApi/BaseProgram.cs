@@ -137,7 +137,6 @@ public abstract class BaseProgram
         services.AddRedisServices(redisConnectionString);
         services.AddSqlDatabaseServices();
         services.AddRbacServices(InitRbacEnforcer());
-        
         services.AddApiKeyServices();
         services.AddScimV2Services();
         services.AddOAuth2Services();
@@ -147,7 +146,7 @@ public abstract class BaseProgram
 
     /// <summary>
     /// Should register a implementation for ISecretService in the dependency container
-    /// <example>services.AddSingleton<ISecretsService, InMemorySecretsService>();</example>
+    /// <example>services.AddSingleton&lt;ISecretsService, InMemorySecretsService&gt;();</example>
     /// </summary>
     protected abstract void AddSecretsService(IServiceCollection services);
 
@@ -160,7 +159,7 @@ public abstract class BaseProgram
         
     /// <summary>
     /// Should register implementations for required factories such as IContextFactory
-    /// <example>services.AddTransient<IContextFactory, ContextFactory>();</example>
+    /// <example>services.AddTransient&lt;IContextFactory, ContextFactory&gt;();</example>
     /// </summary>
     protected abstract void AddFactories(IServiceCollection services);
         
