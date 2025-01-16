@@ -80,7 +80,7 @@ public class StudentService(
 
     protected override Task GetByIdHandleInputAsync(IContext context, CancellationToken cancellationToken)
     {
-        context.State.StudentId = Guid.Parse(context.GetRequiredRouteValue<string>("StudentId"));
+        context.State.StudentId = Guid.Parse(context.GetRequiredRouteValue<string>("studentId"));
         return Task.CompletedTask;
     }
 
@@ -310,7 +310,7 @@ public class StudentService(
 
     protected override Task DeleteHandleInputAsync(IContext context, CancellationToken cancellationToken)
     {
-        context.State.StudentId = Guid.Parse(context.GetRequiredRouteValue<string>("StudentId"));
+        context.State.StudentId = Guid.Parse(context.GetRequiredRouteValue<string>("studentId"));
         return Task.CompletedTask;
     }
 
