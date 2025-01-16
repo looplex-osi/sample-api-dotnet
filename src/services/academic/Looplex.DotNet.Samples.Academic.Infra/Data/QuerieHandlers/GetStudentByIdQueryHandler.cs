@@ -19,7 +19,7 @@ namespace Looplex.DotNet.Samples.Academic.Infra.Data.QuerieHandlers
                 WHERE {where}
                 ";
 
-            using var dbService = await request.Context.GetSqlDatabaseService();
+            var dbService = await request.Context.GetSqlDatabaseService();
 
             var record = await dbService.QueryFirstOrDefaultAsync<dynamic>(query, new { Id = request.UniqueId });
             if (record == null)

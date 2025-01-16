@@ -14,7 +14,7 @@ namespace Looplex.DotNet.Samples.Academic.Infra.Data.CommandHandlers
                 output inserted.id, inserted.uuid, inserted.created_at
                 values (@ExternalId, @RegistrationId, @UserId)";
 
-            using var dbService = await request.Context.GetSqlDatabaseService();
+            var dbService = await request.Context.GetSqlDatabaseService();
             await using var transaction = dbService.BeginTransaction();
             
             var (id, uniqueId, createdAt) = await dbService.QueryFirstOrDefaultAsync<(int, Guid, DateTimeOffset)>(

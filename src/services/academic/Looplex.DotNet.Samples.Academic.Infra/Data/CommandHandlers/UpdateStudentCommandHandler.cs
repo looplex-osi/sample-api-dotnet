@@ -14,7 +14,7 @@ namespace Looplex.DotNet.Samples.Academic.Infra.Data.CommandHandlers
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            using var dbService = await request.Context.GetSqlDatabaseService();
+            var dbService = await request.Context.GetSqlDatabaseService();
             await using var transaction = dbService.BeginTransaction();
 
             await UpdateStudentIfNecessaryAsync(request.Student, dbService, transaction);

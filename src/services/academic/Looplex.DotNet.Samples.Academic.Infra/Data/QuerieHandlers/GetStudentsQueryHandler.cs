@@ -25,7 +25,7 @@ namespace Looplex.DotNet.Samples.Academic.Infra.Data.QuerieHandlers
                 {where}
                 ";
 
-            using var dbService = await request.Context.GetSqlDatabaseService();
+            var dbService = await request.Context.GetSqlDatabaseService();
 
             int count = await dbService.QueryFirstOrDefaultAsync<int>(query);
             
