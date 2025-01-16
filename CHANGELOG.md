@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="1.2.1"></a>
+## 1.2.1 (2025-01-16)
+
+### Bug Fixes
+
+* **database:** do not dispose databse service in command and query handlers
+* **dependencies:** update nuget dependencies
+* **dependencies:** updated nuget packages
+* **users:** fiz wrong route value name in service
+
 <a name="1.2.0"></a>
 ## 1.2.0 (2025-01-15)
 
