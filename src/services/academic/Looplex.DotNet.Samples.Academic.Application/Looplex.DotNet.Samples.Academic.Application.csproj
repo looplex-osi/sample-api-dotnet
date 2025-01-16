@@ -9,7 +9,7 @@
     <PackageReference Include="MediatR.Contracts" Version="2.0.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.1" />
     <PackageReference Include="ScimPatch" Version="2.0.3" />
-    <PackageReference Include="Looplex.DotNet.Middlewares.ScimV2" Version="2.5.3" />
+    <PackageReference Include="Looplex.DotNet.Middlewares.ScimV2" Version="3.0.2" />
   </ItemGroup>
 
   <ItemGroup>

@@ -15,7 +15,6 @@ namespace Looplex.DotNet.Samples.Academic.Infra.Data.CommandHandlers
                 values (@ExternalId, @RegistrationId, @UserId)";
 
             using var dbService = await request.Context.GetSqlDatabaseService();
-            dbService.OpenConnection();
             await using var transaction = dbService.BeginTransaction();
             
             var (id, uniqueId, createdAt) = await dbService.QueryFirstOrDefaultAsync<(int, Guid, DateTimeOffset)>(

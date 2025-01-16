@@ -44,6 +44,7 @@ public class StudentServiceTests
         var roles = new Dictionary<string, dynamic>();
         _context.Roles.Returns(roles);
         _cancellationToken = new CancellationToken();
+        _context.State.CancellationToken = _cancellationToken;
     }
 
     [TestMethod]
@@ -68,7 +69,7 @@ public class StudentServiceTests
             });
 
         // Act
-        await _studentService.GetAllAsync(_context, _cancellationToken);
+        await _studentService.GetAllAsync(_context);
 
         // Assert
         var result = JsonConvert.DeserializeObject<ListResponse>((string)_context.Result!)!;
@@ -83,12 +84,12 @@ public class StudentServiceTests
         // Arrange
         _context.RouteValues = new Dictionary<string, object?>
         {
-            { "StudentId", Guid.NewGuid().ToString() }
+            { "studentId", Guid.NewGuid().ToString() }
         };
 
         // Act & Assert
         await Assert.ThrowsExceptionAsync<EntityNotFoundException>(() =>
-            _studentService.GetByIdAsync(_context, _cancellationToken));
+            _studentService.GetByIdAsync(_context));
     }
 
     [TestMethod]
@@ -102,14 +103,14 @@ public class StudentServiceTests
         };
         _context.RouteValues = new Dictionary<string, object?>
         {
-            { "StudentId", existingStudent.UniqueId.ToString() }
+            { "studentId", existingStudent.UniqueId.ToString() }
         };
         _mediator.Send(Arg.Is<GetStudentByIdQuery>(q => q.UniqueId == existingStudent.UniqueId),
                 Arg.Any<CancellationToken>())
             .Returns(existingStudent);
 
         // Act
-        await _studentService.GetByIdAsync(_context, _cancellationToken);
+        await _studentService.GetByIdAsync(_context);
 
         // Assert
         JsonConvert.DeserializeObject<Student>(_context.Result!.ToString()!).Should().BeEquivalentTo(existingStudent);
@@ -130,7 +131,7 @@ public class StudentServiceTests
         _context.State.Resource = studentJson;
 
         // Act
-        await _studentService.CreateAsync(_context, _cancellationToken);
+        await _studentService.CreateAsync(_context);
 
         // Assert
         await _mediator.Received(1)
@@ -161,12 +162,12 @@ public class StudentServiceTests
         _context.State.Operations = "[ { \"op\": \"add\", \"path\": \"InvalidPath\", \"value\": \"Updated Reg\" } ]";
         _context.RouteValues = new Dictionary<string, object?>
         {
-            { "StudentId", existingStudent.UniqueId.ToString() }
+            { "studentId", existingStudent.UniqueId.ToString() }
         };
         _context.Roles["Student"] = existingStudent;
 
         // Act
-        Task Action() => _studentService.PatchAsync(_context, _cancellationToken);
+        Task Action() => _studentService.PatchAsync(_context);
 
         // Assert
         var ex = await Assert.ThrowsExceptionAsync<ArgumentException>(() => Action());
@@ -210,11 +211,11 @@ public class StudentServiceTests
         ]";
         _context.RouteValues = new Dictionary<string, object?>
         {
-            { "StudentId", existingStudent.UniqueId.ToString() }
+            { "studentId", existingStudent.UniqueId.ToString() }
         };
 
         // Act
-        await _studentService.PatchAsync(_context, _cancellationToken);
+        await _studentService.PatchAsync(_context);
 
         // Assert
         await _mediator.Received(1).Send(
@@ -243,7 +244,7 @@ public class StudentServiceTests
         // Arrange
         _configuration["JsonSchemaIdForStudent"].Returns("studentSchemaId");
         var studentSchema =
-            (await File.ReadAllTextAsync("Entities/Schemas/Student.1.0.schema.json", _cancellationToken));
+            (await File.ReadAllTextAsync("Entities/Schemas/Student.1.0.schema.json"));
         _jsonSchemaProvider
             .ResolveJsonSchemaAsync(Arg.Any<IScimV2Context>(), "studentSchemaId")
             .Returns(studentSchema);
@@ -272,11 +273,11 @@ public class StudentServiceTests
         ]";
         _context.RouteValues = new Dictionary<string, object?>
         {
-            { "StudentId", existingStudent.UniqueId.ToString() }
+            { "studentId", existingStudent.UniqueId.ToString() }
         };
 
         // Act
-        Task Action() => _studentService.PatchAsync(_context, _cancellationToken);
+        Task Action() => _studentService.PatchAsync(_context);
 
         // Assert
         var ex = await Assert.ThrowsExceptionAsync<EntityInvalidException>(async () => await Action());
@@ -294,12 +295,12 @@ public class StudentServiceTests
         // Arrange
         _context.RouteValues = new Dictionary<string, object?>
         {
-            { "StudentId", Guid.NewGuid().ToString() }
+            { "studentId", Guid.NewGuid().ToString() }
         };
 
         // Act & Assert
         await Assert.ThrowsExceptionAsync<EntityNotFoundException>(() =>
-            _studentService.DeleteAsync(_context, _cancellationToken));
+            _studentService.DeleteAsync(_context));
     }
 
     [TestMethod]
@@ -313,14 +314,14 @@ public class StudentServiceTests
         };
         _context.RouteValues = new Dictionary<string, object?>
         {
-            { "StudentId", existingStudent.UniqueId.ToString() }
+            { "studentId", existingStudent.UniqueId.ToString() }
         };
         _mediator.Send(Arg.Is<GetStudentByIdQuery>(q => q.UniqueId == existingStudent.UniqueId),
                 Arg.Any<CancellationToken>())
             .Returns(existingStudent);
 
         // Act
-        await _studentService.DeleteAsync(_context, _cancellationToken);
+        await _studentService.DeleteAsync(_context);
 
         // Assert
         await _mediator.Received(1)

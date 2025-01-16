@@ -45,6 +45,7 @@ public abstract class BaseProgram
         builder.Services.AddHealthChecks()
             .AddCheck<HealthCheck>("Default");
         builder.Services.AddRedisHealthChecks();
+        builder.Services.AddRoutingDatabaseHealthChecks();
         builder.Services.AddSqlDatabaseHealthChecks();
         builder.Services.AddMemoryCache();
 
