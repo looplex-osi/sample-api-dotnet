@@ -1,6 +1,6 @@
 using Looplex.DotNet.Core.Application.Abstractions.Services;
 
-namespace Looplex.DotNet.Samples.WebAPI.Services;
+namespace Looplex.DotNet.Samples.WebApi.Services;
 
 /// <summary>
 /// In memory secrets service while implementation using keyvault is not finished

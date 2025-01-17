@@ -4,7 +4,7 @@ using Looplex.DotNet.Samples.Academic.Application.Services;
 using Looplex.DotNet.Samples.Academic.Domain.Entities.Students;
 using Looplex.DotNet.WebApi.Routes;
 
-namespace Looplex.DotNet.Samples.WebAPI.Routes.Academic
+namespace Looplex.DotNet.Samples.WebApi.Routes.Academic
 {
     public static class StudentsRoutes
     {

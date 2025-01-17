@@ -1,6 +1,6 @@
 ﻿using Looplex.OpenForExtension.Abstractions.Plugins;
 
-namespace Looplex.DotNet.Samples.WebAPI.Extensions
+namespace Looplex.DotNet.Samples.WebApi.Extensions
 {
     public static class PluginLoader
     {

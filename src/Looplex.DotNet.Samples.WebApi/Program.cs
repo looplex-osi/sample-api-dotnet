@@ -3,12 +3,12 @@ using Casbin;
 using Looplex.DotNet.Core.Application.Abstractions.Factories;
 using Looplex.DotNet.Core.Application.Abstractions.Services;
 using Looplex.DotNet.Samples.Academic.Infra.IoC;
-using Looplex.DotNet.Samples.WebAPI.Factories;
-using Looplex.DotNet.Samples.WebAPI.Routes.Academic;
-using Looplex.DotNet.Samples.WebAPI.Services;
+using Looplex.DotNet.Samples.WebApi.Factories;
+using Looplex.DotNet.Samples.WebApi.Routes.Academic;
+using Looplex.DotNet.Samples.WebApi.Services;
 using Looplex.DotNet.WebApi;
 
-namespace Looplex.DotNet.Samples.WebAPI
+namespace Looplex.DotNet.Samples.WebApi
 {
     public class Program : BaseProgram
     {

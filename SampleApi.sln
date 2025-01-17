@@ -9,7 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docker", "docker", "{FB9056
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "services", "services", "{FC682368-BA5C-4705-B7C6-0F76CB8C0F35}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Looplex.DotNet.Samples.WebAPI", "src\Looplex.DotNet.Samples.WebAPI\Looplex.DotNet.Samples.WebAPI.csproj", "{258191D1-F5B8-45C8-A113-21FE2F51F742}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Looplex.DotNet.Samples.WebApi", "src\Looplex.DotNet.Samples.WebApi\Looplex.DotNet.Samples.WebApi.csproj", "{258191D1-F5B8-45C8-A113-21FE2F51F742}"
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "src\docker\docker-compose.dcproj", "{02CBE1F9-4217-47D0-8F79-D848799A30C6}"
 EndProject
