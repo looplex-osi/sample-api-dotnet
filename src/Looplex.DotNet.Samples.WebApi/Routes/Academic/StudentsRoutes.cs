@@ -11,7 +11,7 @@ namespace Looplex.DotNet.Samples.WebApi.Routes.Academic
         public static Task UseStudentRoutesAsync(this IEndpointRouteBuilder app, string schemaIdStudent, CancellationToken cancellationToken)
         {
             return app.UseScimV2RoutesAsync<Student, IStudentService>(
-                "students",
+                "Students",
                 schemaIdStudent,
                 DefaultScimV2RouteOptions.CreateFor<StudentService>(),
                 cancellationToken);
