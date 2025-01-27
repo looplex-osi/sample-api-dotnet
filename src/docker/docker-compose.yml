@@ -1,6 +1,7 @@
 services:
   looplex.dotnet.samples.webapi:
     image: ${DOCKER_REGISTRY-}looplex.dotnet.samples.webapi
+    container_name: looplex.dotnet.samples.webapi
     build:
       context: ../.
       dockerfile: Looplex.DotNet.Samples.WebAPI/Dockerfile
@@ -42,6 +43,7 @@ services:
 
   looplex.dotnet.samples.routing.db:
     image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: looplex.dotnet.samples.routing.db
     networks:
       - looplex
     volumes:
@@ -52,6 +54,7 @@ services:
       
   looplex.dotnet.samples.academic.db:
     image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: looplex.dotnet.samples.academic.db
     networks:
       - looplex
     volumes:

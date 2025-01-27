@@ -6,8 +6,8 @@
   "scripts": {
     "commit": "cz",
     "prepare": "husky",
-    "migration-academic": "docker exec -it looplex-dotnet-samples-academic-db bash -c \"/db-migration.sh\"",
-    "migration-routing": "docker exec -it looplex-dotnet-samples-routing-db bash -c \"/db-migration.sh\"",
+    "migration-academic": "docker exec -it looplex.dotnet.samples.academic.db bash -c \"/db-migration.sh\"",
+    "migration-routing": "docker exec -it looplex.dotnet.samples.routing.db bash -c \"/db-migration.sh\"",
     "test": "docker compose -f \"test/docker/docker-compose.yml\" -f \"test/docker/docker-compose.override.yml\" -p dockercomposelooplexsampleswebapitest up -d && echo \"Waiting 30s for the container to up...\" && sleep 30 && docker exec -it sample-api-dotnet-db-test bash -c \"/db-migration.sh\" && dotnet test && docker compose -p dockercomposelooplexsampleswebapitest down && docker volume rm dockercomposelooplexsampleswebapitest_dbdata-test",
     "test-down": "docker compose -p dockercomposelooplexsampleswebapitest down",
     "test-clean": "docker volume rm dockercomposelooplexsampleswebapitest_dbdata-test"
