@@ -34,7 +34,7 @@ namespace Looplex.DotNet.Samples.Academic.Infra.Data.CommandHandlers
                 var sets = new List<string>();
                 foreach (var changedProperty in student.ChangedPropertyNotification.ChangedProperties)
                 {
-                    sets.Add($"{StudentMapper.Maps[changedProperty]} = @{changedProperty}");
+                    sets.Add($"{ StudentMapper.Maps[changedProperty]} = @{changedProperty}");
                     parameters[$"{changedProperty}"] = studentType.GetProperty(changedProperty)!.GetValue(student)!;
                 }
                 parameters.Add("UniqueId", student.UniqueId!.Value);
