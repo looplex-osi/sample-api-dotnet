@@ -30,7 +30,7 @@ services:
       ClientSecretDigestCost: 4
       JsonSchemaIgnoreWhenNotFound: true
       JsonSchemaCodeUrl: "https://apim.looplex.com/actions/v1/jsonschema"
-      JsonSchemaIdForBulkOperation: "Scim/ClientCredential.1.0.schema.json"
+      JsonSchemaIdForBulkOperation: "Scim/BulkRequest.1.0.schema.json"
       JsonSchemaIdForClientCredential: "Scim/ClientCredential.1.0.schema.json"
       JsonSchemaIdForUser: "Scim/User.1.0.schema.json"
       JsonSchemaIdForGroup: "Scim/Group.1.0.schema.json"
@@ -39,8 +39,6 @@ services:
       - looplex.dotnet.samples.routing.db
     networks:
       - looplex
-    volumes:
-      - ../schemas:/schemas
 
   looplex.dotnet.samples.routing.db:
     image: mcr.microsoft.com/mssql/server:2022-latest
