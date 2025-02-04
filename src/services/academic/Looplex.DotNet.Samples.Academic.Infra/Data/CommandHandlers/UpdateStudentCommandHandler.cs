@@ -15,6 +15,7 @@ namespace Looplex.DotNet.Samples.Academic.Infra.Data.CommandHandlers
             cancellationToken.ThrowIfCancellationRequested();
 
             var dbService = await request.Context.GetSqlDatabaseService();
+
             await using var transaction = dbService.BeginTransaction();
 
             await UpdateStudentIfNecessaryAsync(request.Student, dbService, transaction);
@@ -32,12 +33,15 @@ namespace Looplex.DotNet.Samples.Academic.Infra.Data.CommandHandlers
                 var studentType = typeof(Student);
                 var update = "UPDATE students SET ";
                 var sets = new List<string>();
+
                 foreach (var changedProperty in student.ChangedPropertyNotification.ChangedProperties)
                 {
                     sets.Add($"{ StudentMapper.Maps[changedProperty]} = @{changedProperty}");
                     parameters[$"{changedProperty}"] = studentType.GetProperty(changedProperty)!.GetValue(student)!;
                 }
+                
                 parameters.Add("UniqueId", student.UniqueId!.Value);
+                
                 var where = "WHERE uuid = @UniqueId";
 
                 var query = $@"
@@ -47,6 +51,7 @@ namespace Looplex.DotNet.Samples.Academic.Infra.Data.CommandHandlers
                 ";
 
                 var count = await sqlDatabaseService.ExecuteAsync(query, parameters, transaction);
+
                 if (count == 0) throw new EntityNotFoundException(nameof(Student), student.UniqueId!.Value.ToString());
             }
         }
