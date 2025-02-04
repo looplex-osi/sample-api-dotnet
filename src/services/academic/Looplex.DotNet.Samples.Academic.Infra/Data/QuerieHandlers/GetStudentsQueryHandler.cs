@@ -6,8 +6,7 @@ using Looplex.DotNet.Samples.Academic.Domain.Queries;
 
 namespace Looplex.DotNet.Samples.Academic.Infra.Data.QuerieHandlers
 {
-    public class GetStudentsQueryHandler()
-        : IQueryHandler<GetStudentsQuery, ListResponse>
+    public class GetStudentsQueryHandler() : IQueryHandler<GetStudentsQuery, ListResponse>
     {
         public async Task<ListResponse> Handle(GetStudentsQuery request, CancellationToken cancellationToken)
         {
@@ -60,9 +59,9 @@ namespace Looplex.DotNet.Samples.Academic.Infra.Data.QuerieHandlers
                 orderBy = "id DESC";
                 
                 query = @$"
-                SELECT {select} FROM projects
-                WHERE {where}
-                ORDER BY {orderBy}
+                    SELECT {select} FROM projects
+                    WHERE {where}
+                    ORDER BY {orderBy}
                 ";
                 
                 var projects = (await dbService
@@ -76,6 +75,7 @@ namespace Looplex.DotNet.Samples.Academic.Infra.Data.QuerieHandlers
             }
             
             request.Context.State.Pagination.TotalCount = count;
+
             return new ListResponse
             {
                 Resources = students.Select(r => (object)r).ToList(),

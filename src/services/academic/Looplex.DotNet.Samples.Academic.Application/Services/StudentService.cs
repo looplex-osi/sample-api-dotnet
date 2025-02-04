@@ -35,6 +35,7 @@ public class StudentService(
         extensionPointOrchestrator), IStudentService
 {
     private const string JsonSchemaIdForStudentKey = "JsonSchemaIdForStudent";
+
     protected override Task GetAllHandleInputAsync(IContext context)
     {
         return Task.CompletedTask;
@@ -63,38 +64,48 @@ public class StudentService(
     protected override async Task GetAllDefaultActionAsync(IContext context)
     {
         var cancellationToken = context.GetRequiredValue<CancellationToken>("CancellationToken");
+
         var getStudentsQuery = new GetStudentsQuery()
         {
             Context = (IScimV2Context)context,
         };
+        
         var result = await mediator.Send(getStudentsQuery, cancellationToken);
+        
         context.Result = JsonConvert.SerializeObject(result, Student.Converter.Settings);
     }
 
     protected override Task GetAllAfterActionAsync(IContext context)
     {
-        return Task.CompletedTask;    }
+        return Task.CompletedTask;    
+    }
 
     protected override Task GetAllReleaseUnmanagedResourcesAsync(IContext context)
     {
-        return Task.CompletedTask;    }
+        return Task.CompletedTask;    
+    }
 
     protected override Task GetByIdHandleInputAsync(IContext context)
     {
         context.State.StudentId = Guid.Parse(context.GetRequiredRouteValue<string>("studentId"));
+
         return Task.CompletedTask;
     }
 
     protected override async Task GetByIdValidateInputAsync(IContext context)
     {
         var cancellationToken = context.GetRequiredValue<CancellationToken>("CancellationToken");
+
         var id = context.GetRequiredValue<Guid>("StudentId");
+        
         var getStudentByIdQuery = new GetStudentByIdQuery
         {
             Context = (IScimV2Context)context,
             UniqueId = id
         };
+        
         var student = await mediator.Send(getStudentByIdQuery, cancellationToken);
+        
         if (student == null)
         {
             throw new EntityNotFoundException(nameof(Student), id.ToString());
@@ -106,7 +117,9 @@ public class StudentService(
     protected override Task GetByIdDefineRolesAsync(IContext context)
     {
         var student = context.GetRequiredValue<Student>("Student");
+
         context.Roles["Student"] = student;
+        
         return Task.CompletedTask;
     }
 
@@ -142,6 +155,7 @@ public class StudentService(
         var schemaId = configuration[JsonSchemaIdForStudentKey]!;
         var jsonSchema = await jsonSchemaProvider.ResolveJsonSchemaAsync(context, schemaId);
         var student = Resource.FromJson<Student>(json, jsonSchema, out var messages);
+
         context.State.Messages = messages;
         context.State.Student = student;
     }
@@ -149,17 +163,21 @@ public class StudentService(
     protected override Task CreateValidateInputAsync(IContext context)
     {
         var messages = context.GetRequiredValue<IList<string>>("Messages");
+
         if (messages.Count > 0)
         {
             throw new EntityInvalidException(messages.ToList());
         }
+        
         return Task.CompletedTask;
     }
 
     protected override Task CreateDefineRolesAsync(IContext context)
     {
         var student = context.GetRequiredValue<Student>("Student");
+        
         context.Roles["Student"] = student;
+
         return Task.CompletedTask;
     }
 
@@ -176,12 +194,15 @@ public class StudentService(
     protected override async Task CreateDefaultActionAsync(IContext context)
     {
         var cancellationToken = context.GetRequiredValue<CancellationToken>("CancellationToken");
+
         var createStudentCommand = new CreateStudentCommand
         {
             Context = (IScimV2Context)context,
             Student = context.Roles["Student"]
         };
+        
         await mediator.Send(createStudentCommand, cancellationToken);
+        
         context.Result = context.Roles["Student"].Id;
     }
 
@@ -238,28 +259,36 @@ public class StudentService(
     protected override async Task PatchHandleInputAsync(IContext context)
     {
         var json = context.GetRequiredValue<string>("Operations");
+
         await GetByIdAsync(context);
-        var student = ((Student)context.Roles["Student"])
-            .WithObservableProxy();
+        
+        var student = ((Student)context.Roles["Student"]).WithObservableProxy();
+        
         context.Roles["Student"] = student;
+
         var operations = OperationTracker.FromJson(student, json);
+        
         context.State.Operations = operations;
     }
 
     protected override Task PatchValidateInputAsync(IContext context)
     {        
         var operations = context.GetRequiredValue<IList<OperationNode>>("Operations");
+
         if (operations.Count == 0)
         {
             throw new InvalidOperationException("List of operations can't be empty.");
         }
+        
         return Task.CompletedTask;
     }
 
     protected override Task PatchDefineRolesAsync(IContext context)
     {
         var operations = context.GetRequiredValue<IList<OperationNode>>("Operations");
+
         context.Roles["Operations"] = operations;
+        
         return Task.CompletedTask;
     }
 
@@ -288,17 +317,22 @@ public class StudentService(
                 throw operationNode.OperationException!;
             }
         }
+
         var json = student.ToJson();
+        
         _ = Resource.FromJson<Student>(json, jsonSchema, out var messages);
+        
         if (messages.Count > 0)
         {
             throw new EntityInvalidException(messages.ToList());
         }
+        
         var command = new UpdateStudentCommand
         {
             Context = (IScimV2Context)context,
             Student = student
         };
+
         await mediator.Send(command, cancellationToken);
     }
 
@@ -321,8 +355,11 @@ public class StudentService(
     protected override async Task DeleteValidateInputAsync(IContext context)
     {
         var id = context.GetRequiredValue<Guid>("StudentId");
+        
         await GetByIdAsync(context);
+
         var student = (Student)context.Roles["Student"];
+        
         if (student == null)
         {
             throw new EntityNotFoundException(nameof(Student), id.ToString());
@@ -348,11 +385,13 @@ public class StudentService(
     {
         var cancellationToken = context.GetRequiredValue<CancellationToken>("CancellationToken");
         var id = context.GetRequiredValue<Guid>("StudentId");
+
         var command = new DeleteStudentCommand
         {
             Context = (IScimV2Context)context,
             UniqueId = id
         };
+        
         await mediator.Send(command, cancellationToken);
     }
 

@@ -22,6 +22,7 @@ namespace Looplex.DotNet.Samples.Academic.Infra.Data.QuerieHandlers
             var dbService = await request.Context.GetSqlDatabaseService();
 
             var record = await dbService.QueryFirstOrDefaultAsync<dynamic>(query, new { Id = request.UniqueId });
+
             if (record == null)
                 throw new EntityNotFoundException(nameof(Student), request.UniqueId.ToString());
 
@@ -36,6 +37,7 @@ namespace Looplex.DotNet.Samples.Academic.Infra.Data.QuerieHandlers
                     LastModified = record.updated_at
                 }
             };
+
             select = "id Id, uuid UniqueId, student_id StudentId, name Name"; 
             where = "student_id = @Id";
             
@@ -43,9 +45,11 @@ namespace Looplex.DotNet.Samples.Academic.Infra.Data.QuerieHandlers
                 SELECT {select} FROM projects
                 WHERE {where}
                 ";
+
             var records = await dbService.QueryAsync<Project>(query, new { Id = student.Id });
             
             student.Projects = records.ToList();
+
             return student;
         }
     }

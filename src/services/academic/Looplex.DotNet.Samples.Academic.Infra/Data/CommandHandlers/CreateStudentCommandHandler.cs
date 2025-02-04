@@ -9,12 +9,14 @@ namespace Looplex.DotNet.Samples.Academic.Infra.Data.CommandHandlers
         public async Task Handle(CreateStudentCommand request, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
+
             var query = @"
                 insert into students (external_id, registration_id, user_id) 
                 output inserted.id, inserted.uuid, inserted.created_at
                 values (@ExternalId, @RegistrationId, @UserId)";
 
             var dbService = await request.Context.GetSqlDatabaseService();
+            
             await using var transaction = dbService.BeginTransaction();
             
             var (id, uniqueId, createdAt) = await dbService.QueryFirstOrDefaultAsync<(int, Guid, DateTimeOffset)>(
@@ -25,7 +27,8 @@ namespace Looplex.DotNet.Samples.Academic.Infra.Data.CommandHandlers
                     request.Student.RegistrationId,
                     request.Student.UserId
                 },
-                transaction);
+                transaction
+            );
 
             request.Student.Id = id;
             request.Student.UniqueId = uniqueId;
@@ -33,6 +36,7 @@ namespace Looplex.DotNet.Samples.Academic.Infra.Data.CommandHandlers
             {
                 Created = createdAt
             };
+
             foreach (var project in request.Student.Projects)
             {
                 query = @"
@@ -43,7 +47,8 @@ namespace Looplex.DotNet.Samples.Academic.Infra.Data.CommandHandlers
                 var ids = await dbService.QueryFirstOrDefaultAsync<(int, Guid)>(
                     query,
                     new { StudentId = id , project.Name },
-                    transaction);
+                    transaction
+                );
                 
                 project.Id = ids.Item1;
                 project.UniqueId = ids.Item2;
