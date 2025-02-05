@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Looplex.DotNet.WebApi\Looplex.DotNet.WebApi.csproj" />
     <ProjectReference Include="..\Looplex.DotNet.Samples.Academic.Application.Abstractions\Looplex.DotNet.Samples.Academic.Application.Abstractions.csproj" />
     <ProjectReference Include="..\Looplex.DotNet.Samples.Academic.Application\Looplex.DotNet.Samples.Academic.Application.csproj" />
     <ProjectReference Include="..\Looplex.DotNet.Samples.Academic.Domain\Looplex.DotNet.Samples.Academic.Domain.csproj" />

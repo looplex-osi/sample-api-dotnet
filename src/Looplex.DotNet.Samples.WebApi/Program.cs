@@ -3,8 +3,8 @@ using Casbin;
 using Looplex.DotNet.Core.Application.Abstractions.Factories;
 using Looplex.DotNet.Core.Application.Abstractions.Services;
 using Looplex.DotNet.Samples.Academic.Infra.IoC;
+using Looplex.DotNet.Samples.Academic.Infra.WebApi;
 using Looplex.DotNet.Samples.WebApi.Factories;
-using Looplex.DotNet.Samples.WebApi.Routes.Academic;
 using Looplex.DotNet.Samples.WebApi.Services;
 using Looplex.DotNet.WebApi;
 
@@ -20,7 +20,7 @@ namespace Looplex.DotNet.Samples.WebApi
         protected override void UseRoutes(IEndpointRouteBuilder app)
         {
             var schemaIdStudent = Configuration["JsonSchemaIdForStudent"]!;
-            app.UseStudentRoutesAsync(schemaIdStudent, CancellationToken.None).GetAwaiter().GetResult();
+            app.UseAcademicRoutesAsync(schemaIdStudent, CancellationToken.None).GetAwaiter().GetResult();
         }
 
         protected override void AddSecretsService(IServiceCollection services)
