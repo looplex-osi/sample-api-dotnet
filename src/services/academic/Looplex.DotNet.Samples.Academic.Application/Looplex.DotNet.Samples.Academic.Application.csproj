@@ -1,20 +1,21 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="MediatR.Contracts" Version="2.0.1" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.1" />
-    <PackageReference Include="ScimPatch" Version="2.0.3" />
-    <PackageReference Include="Looplex.DotNet.Middlewares.ScimV2" Version="3.0.2" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="MediatR.Contracts" Version="2.0.1" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.1" />
+		<PackageReference Include="ScimPatch" Version="2.0.3" />
+		<PackageReference Include="Looplex.DotNet.Middlewares.ScimV2" Version="3.0.2" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Looplex.DotNet.Samples.Academic.Application.Abstractions\Looplex.DotNet.Samples.Academic.Application.Abstractions.csproj" />
-    <ProjectReference Include="..\Looplex.DotNet.Samples.Academic.Domain\Looplex.DotNet.Samples.Academic.Domain.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Looplex.DotNet.Samples.Academic.Application.Abstractions\Looplex.DotNet.Samples.Academic.Application.Abstractions.csproj" />
+		<ProjectReference Include="..\Looplex.DotNet.Samples.Academic.Domain\Looplex.DotNet.Samples.Academic.Domain.csproj" />
+	</ItemGroup>
 
 </Project>

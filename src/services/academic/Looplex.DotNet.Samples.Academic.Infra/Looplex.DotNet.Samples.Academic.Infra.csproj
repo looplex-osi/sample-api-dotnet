@@ -1,21 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Dapper" Version="2.1.35" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.1" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Dapper" Version="2.1.35" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.1" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\Looplex.DotNet.WebApi\Looplex.DotNet.WebApi.csproj" />
-    <ProjectReference Include="..\Looplex.DotNet.Samples.Academic.Application.Abstractions\Looplex.DotNet.Samples.Academic.Application.Abstractions.csproj" />
-    <ProjectReference Include="..\Looplex.DotNet.Samples.Academic.Application\Looplex.DotNet.Samples.Academic.Application.csproj" />
-    <ProjectReference Include="..\Looplex.DotNet.Samples.Academic.Domain\Looplex.DotNet.Samples.Academic.Domain.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\Looplex.DotNet.WebApi\Looplex.DotNet.WebApi.csproj" />
+		<ProjectReference Include="..\Looplex.DotNet.Samples.Academic.Application.Abstractions\Looplex.DotNet.Samples.Academic.Application.Abstractions.csproj" />
+		<ProjectReference Include="..\Looplex.DotNet.Samples.Academic.Application\Looplex.DotNet.Samples.Academic.Application.csproj" />
+		<ProjectReference Include="..\Looplex.DotNet.Samples.Academic.Domain\Looplex.DotNet.Samples.Academic.Domain.csproj" />
+	</ItemGroup>
 
 </Project>

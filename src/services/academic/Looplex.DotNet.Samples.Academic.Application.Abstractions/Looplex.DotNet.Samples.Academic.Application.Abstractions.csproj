@@ -3,10 +3,11 @@
 	<PropertyGroup>
 		<TargetFramework>net9.0</TargetFramework>
 		<Nullable>enable</Nullable>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Looplex.DotNet.Core.Application.Abstractions" Version="4.0.2" />
+		<PackageReference Include="Looplex.DotNet.Core.Application.Abstractions" Version="4.0.2" />
 	</ItemGroup>
 
 </Project>
